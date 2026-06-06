@@ -1,8 +1,8 @@
 # Phase 06 — Batch Job & Notifications
 
-**Goal:** Vercel cron running the full assignment job on a daily schedule. SNS SMS notifications wired. Manual trigger endpoint functional from the UI.
+**Goal:** Vercel cron running the full assignment job on a daily schedule. Twilio SMS notifications wired. Manual trigger endpoint functional from the UI.
 
-**Prerequisites:** Phases 01–05 complete. Phase 09 (AWS CDK) deployed (or SNS stub if CDK not yet deployed).
+**Prerequisites:** Phases 01–05 complete. Twilio account credentials available (see action-checklist).
 
 ---
 
@@ -34,36 +34,38 @@ if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 
 ---
 
-## SNS Notification Sink
+## Twilio Notification Sink
 
-`packages/domain/src/notifications/snsNotificationSink.ts`:
+`packages/domain/src/notifications/twilioNotificationSink.ts`
 
-Implements `NotificationSink`. Uses `@aws-sdk/client-sns`.
+Implements `NotificationSink`. Uses the `twilio` npm package.
 
 ```ts
-export class SnsNotificationSink implements NotificationSink {
+import Twilio from 'twilio';
+
+export class TwilioNotificationSink implements NotificationSink {
+  private readonly client: Twilio.Twilio;
+
   constructor(
-    private readonly snsClient: SNSClient,
-    private readonly topicArn: string,
-  ) {}
+    accountSid: string,
+    authToken: string,
+    private readonly fromNumber: string,
+  ) {
+    this.client = Twilio(accountSid, authToken);
+  }
 
   async sendDailySummary(user, assignedChores, unassignedChores, websiteUrl) {
     const message = formatDailySummaryMessage(user, assignedChores, unassignedChores, websiteUrl);
-    await this.snsClient.send(
-      new PublishCommand({
-        TopicArn: this.topicArn,
-        Message: message,
-        Subject: 'Your chores for today',
-        MessageAttributes: {
-          'AWS.SNS.SMS.SMSType': { DataType: 'String', StringValue: 'Transactional' },
-        },
-      }),
-    );
+    await this.client.messages.create({
+      body: message,
+      from: this.fromNumber,
+      to: user.phone,
+    });
   }
 }
 ```
 
-`packages/domain/src/notifications/dailySummaryFormatter.ts` — pure function that formats the notification message as plain text (for SMS).
+`packages/domain/src/notifications/dailySummaryFormatter.ts` — pure function formatting the SMS as plain text.
 
 Message format:
 
@@ -83,51 +85,50 @@ Manage at: [websiteUrl]
 
 ## Notification Routing
 
-The `POST /api/jobs/run` and `GET /api/jobs/assign-chores` routes construct the notification sink differently:
+`apps/web/src/lib/notifications/buildNotificationSink.ts` constructs the correct sink:
 
-- With messages enabled + SNS available: `new SnsNotificationSink(snsClient, topicArn)`
-- With messages disabled or in test: `new ConsoleNotificationSink()` (logs to stdout)
-
-The sink selection lives in `apps/web/src/lib/notifications/buildNotificationSink.ts`.
+- Messages enabled: `new TwilioNotificationSink(accountSid, authToken, fromNumber)`
+- Messages disabled or in test: `new ConsoleNotificationSink()` (logs to stdout)
 
 ---
 
-## Individual Notification vs. Per-User Topics
+## Twilio SDK Setup
 
-For simplicity in v1, use **direct SNS Publish** to each user's phone number (not a subscription-based topic). This avoids managing individual subscriptions.
-
-The `sendDailySummary` method publishes to the phone number directly:
-
-```ts
-await snsClient.send(
-  new PublishCommand({
-    PhoneNumber: user.phone, // E.164 format
-    Message: message,
-  }),
-);
+```
+pnpm --filter @chore-wheel/domain add twilio
 ```
 
-The CDK stack still creates an SNS topic for future use (e.g., bulk messaging), but the notification sink uses direct-to-phone for v1.
+`apps/web/src/lib/notifications/buildNotificationSink.ts`:
+
+```ts
+export const buildNotificationSink = (sendMessages: boolean): NotificationSink => {
+  if (!sendMessages) return new ConsoleNotificationSink();
+  return new TwilioNotificationSink(
+    process.env.TWILIO_ACCOUNT_SID!,
+    process.env.TWILIO_AUTH_TOKEN!,
+    process.env.TWILIO_PHONE_NUMBER!,
+  );
+};
+```
 
 ---
 
-## AWS SDK Setup
+## Phone Verification (also Twilio)
 
-```
-pnpm --filter @chore-wheel/domain add @aws-sdk/client-sns
-```
+The same Twilio client is used for the sign-up phone verification SMS. The `PhoneVerificationSink` interface (introduced in Phase 03 as a console stub) gets its production implementation here:
 
-`apps/web/src/lib/notifications/createSnsClient.ts`:
+`packages/domain/src/notifications/twilioPhoneVerificationSink.ts`:
 
 ```ts
-export const createSnsClient = () =>
-  new SNSClient({
-    region: process.env.AWS_REGION!,
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-    },
-  });
+export class TwilioPhoneVerificationSink implements PhoneVerificationSink {
+  async sendVerificationCode(phone: string, code: string): Promise<void> {
+    await this.client.messages.create({
+      body: `Your Chore Wheel verification code is: ${code}`,
+      from: this.fromNumber,
+      to: phone,
+    });
+  }
+}
 ```
 
 ---
@@ -138,7 +139,7 @@ export const createSnsClient = () =>
 
 `packages/domain/src/__tests__/notifications/dailySummaryFormatter.test.ts`:
 
-- Formats message correctly with assigned + unassigned chores.
+- Formats correctly with assigned + unassigned chores.
 - Handles zero assigned chores.
 - Handles zero unassigned chores.
 - Includes the website URL.
@@ -148,16 +149,16 @@ export const createSnsClient = () =>
 `apps/web/src/__tests__/api/assignChoresJob.test.ts`:
 
 - Uses in-memory repos and `ConsoleNotificationSink`.
-- Runs job; verifies chores created, expired chores marked.
-- Verifies cron endpoint returns 401 without CRON_SECRET.
-- Verifies cron endpoint returns 200 with correct CRON_SECRET.
-- Verifies job is idempotent.
+- Runs job; verifies chores created and expired chores marked.
+- Verifies cron endpoint returns 401 without correct `CRON_SECRET`.
+- Verifies cron endpoint returns 200 with correct `CRON_SECRET`.
+- Verifies job is idempotent (run twice, same result).
 
 ### Manual test (pre-deploy)
 
-- Add your phone to SNS sandbox (verified list).
+- Set real Twilio credentials in `.env.local`.
 - Run `POST /api/jobs/run` from the UI.
-- Confirm SMS arrives.
+- Confirm SMS arrives on your phone.
 
 ---
 
@@ -166,11 +167,12 @@ export const createSnsClient = () =>
 - [ ] Cron endpoint rejects unauthorized requests.
 - [ ] Cron endpoint runs job and returns `{ expiredCount, createdCount, notificationsSent }`.
 - [ ] SMS format is readable on mobile.
-- [ ] `disableMessages=true` skips SNS calls entirely.
+- [ ] `disableMessages=true` skips Twilio calls entirely.
 - [ ] Running the job twice in a day doesn't create duplicate chores.
+- [ ] Phone verification SMS sends via Twilio in production mode.
 
 ---
 
 ## Commit Message
 
-`feat(jobs): add Vercel cron handler and SNS SMS notification sink`
+`feat(jobs): add Vercel cron handler and Twilio SMS notification sink`

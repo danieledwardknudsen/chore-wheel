@@ -27,14 +27,14 @@ This file tracks everything an agent cannot do autonomously. Check off each item
 
 ## Before Phase 02 — Database Schema
 
-- [ ] **Create a Neon project** at https://neon.tech
+- [x] **Create a Neon project** at https://neon.tech
   - Create two databases: `chore_wheel_prod` and `chore_wheel_test`.
-  - Provide the connection strings:
-    - `DATABASE_URL` (prod) — pooled connection string
-    - `DATABASE_URL_TEST` (test) — pooled connection string
-    - `DATABASE_URL_DIRECT` (prod) — direct (non-pooled) connection string, needed for migrations
+  - Provide the connection strings: - `DATABASE_URL` (prod) — pooled connection string - `DATABASE_URL_TEST` (test) — pooled connection string - `DATABASE_URL_DIRECT` (prod) — direct (non-pooled) connection string, needed for migrations
+    DATABASE_URL=postgresql://neondb_owner:npg_GYVeExHKIn71@ep-jolly-bread-afb9p3x5-pooler.c-2.us-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    DATABASE_URL_DIRECT=postgresql://neondb_owner:npg_GYVeExHKIn71@ep-jolly-bread-afb9p3x5.c-2.us-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    DATABASE_URL_TEST=postgresql://neondb_owner:npg_GYVeExHKIn71@ep-bold-brook-afj69o01-pooler.c-2.us-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 
-- [ ] **Create a `.env.local` file** in `apps/web/` with the values above. (Template will be in `apps/web/.env.example`.)
+- [x] **Create a `.env.local` file** in `apps/web/` with the values above. (Template will be in `apps/web/.env.example`.)
 
 ---
 
@@ -51,36 +51,21 @@ This file tracks everything an agent cannot do autonomously. Check off each item
 
 ---
 
-## Before Phase 06 — Batch Job (AWS SNS)
+## Before Phase 06 — Batch Job (Twilio)
 
-- [x] **Create an AWS account** (if you don't have one): https://aws.amazon.com
+No AWS setup required. SMS is handled by Twilio.
 
-- [ ] **Create an IAM user for CDK deployment**:
-  - Permissions: `AdministratorAccess` (for CDK bootstrap; can scope down after first deploy)
-  - Generate access keys and run `aws configure` to store them locally.
+- [ ] **Create a Twilio account** at https://twilio.com (free trial is enough for development).
 
-- [ ] **Bootstrap the CDK** (one-time per AWS account/region):
+- [ ] **Get a Twilio phone number**:
+  - In the Twilio console: Phone Numbers → Manage → Buy a number.
+  - A trial account gives you one free number. It can only SMS verified numbers until you upgrade — add your phone to the verified list for testing.
+  - Note the number in E.164 format (e.g. `+12065551234`).
 
-  ```
-  cd infrastructure
-  pnpm cdk bootstrap aws://<account-id>/<region>
-  ```
-
-  Use `us-east-1` unless you have a preference. Provide your AWS account ID:
-  - Account ID: **544980890229**
-  - Preferred region: **us-west-2**
-
-- [ ] **Request SNS sandbox exit** (for sending SMS to unverified numbers):
-  - By default, AWS SNS is in sandbox mode and can only SMS pre-verified numbers.
-  - Submit a request to exit sandbox: AWS Console → SNS → Text messaging (SMS) → Request to exit sandbox.
-  - This takes 1-3 business days. Until approved, add your phone to the sandbox verified list for testing.
-  - Alternatively, for the initial build we can stub SMS behind an interface and skip this.
-
-- [ ] **Set SNS credentials** in `.env.local` after CDK deploy:
-  - `AWS_REGION` — e.g. `us-east-1`
-  - `AWS_ACCESS_KEY_ID` — from the IAM user created by CDK for the app
-  - `AWS_SECRET_ACCESS_KEY` — same
-  - `SNS_TOPIC_ARN_SMS` — output from CDK deploy
+- [ ] **Set Twilio credentials** in `.env.local`:
+  - `TWILIO_ACCOUNT_SID` — from the Twilio console dashboard
+  - `TWILIO_AUTH_TOKEN` — from the Twilio console dashboard
+  - `TWILIO_PHONE_NUMBER` — the E.164 number you purchased
 
 - [ ] **Set cron secret** in `.env.local`:
   - `CRON_SECRET` — random string used by Vercel to authenticate cron requests. Generate with `openssl rand -hex 32`.

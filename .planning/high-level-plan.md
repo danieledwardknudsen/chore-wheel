@@ -9,12 +9,13 @@ Phase 01 — Repo & Tooling          (no dependencies)
   └── Phase 02 — Database Schema   (needs 01: monorepo & Drizzle)
         └── Phase 03 — Auth        (needs 02: users & passkeys tables)
               └── Phase 04 — Domain Logic   (needs 02: schema types)
-                    ├── Phase 05 — API Layer         (needs 02, 03, 04)
-                    └── Phase 09 — AWS Infra          (can run alongside 05)
-                          └── Phase 06 — Batch Job   (needs 04, 05, 09)
+                    └── Phase 05 — API Layer         (needs 02, 03, 04)
+                          └── Phase 06 — Batch Job   (needs 04, 05)
                                 └── Phase 07 — Frontend Foundation  (needs 03, 05)
                                       └── Phase 08 — Frontend Features (needs 05, 06, 07)
 ```
+
+Phase 09 (AWS Infrastructure) is **removed** — Twilio is used for SMS, so there is no AWS infrastructure.
 
 ## Phase Summaries
 
@@ -53,7 +54,7 @@ Drizzle relations defined. Zod schemas derived from Drizzle types. Integration t
 
 - `@simplewebauthn/server` + `@simplewebauthn/browser` for WebAuthn
 - `iron-session` for cookie-based sessions
-- AWS SNS for phone verification SMS (or a stub if SNS not yet deployed)
+- Twilio Messages API for phone verification SMS (or a console stub in tests)
 - API routes: `/api/auth/register/*`, `/api/auth/login/*`, `/api/auth/verify-phone`
 - Middleware protecting all non-auth routes
 - Tests: unit for session logic, integration for API routes, e2e for sign-up + sign-in flow
@@ -99,8 +100,8 @@ Unit tests for every public function including edge cases (leap years, weight ti
 
 - `apps/web/src/app/api/jobs/assign-chores/route.ts` — cron handler
 - `vercel.json` — cron schedule (`0 8 * * *` = 8 AM UTC daily)
-- SNS notification sink implementation (in `packages/domain/src/notifications/`)
-- Wires up `assignmentJobRunner` with real Postgres repos + SNS sink
+- Twilio notification sink implementation (in `packages/domain/src/notifications/`)
+- Wires up `assignmentJobRunner` with real Postgres repos + Twilio sink
 - Manual trigger endpoint: `POST /api/jobs/run?disableMessages=true` (protected by auth)
 - Integration test: runs job against test DB, asserts chores created + statuses updated
 
@@ -134,17 +135,9 @@ Pages:
 
 Feature components: `ChoreCard`, `ChoreRuleForm`, `AssigneeRuleBuilder`, `ScheduleBuilder`, `UserChip`
 
-### Phase 09 — AWS Infrastructure
+### ~~Phase 09 — AWS Infrastructure~~ (removed)
 
-**Output:** CDK stack deployed, SNS topic live, IAM credentials issued.
-
-CDK constructs:
-
-- `ChoreWheelStack` — main stack
-- SNS topic for SMS (uses AWS SNS direct-to-phone for US numbers)
-- SNS topic for email (optional, if opted in)
-- IAM user with `sns:Publish` permission; access key stored as Vercel env var
-- CloudFormation outputs for topic ARNs
+SMS notifications use Twilio instead of AWS SNS. There is no AWS infrastructure, so no CDK stack is needed. The `infrastructure/` package stub remains in the repo but is empty.
 
 ---
 
@@ -160,4 +153,5 @@ CDK constructs:
 | Styling          | Tailwind CSS + CSS custom properties                                                                                                        | Utility-first; token aliases (`var(--color-*)`) let themes swap values without changing class names                                                                        |
 | Theming          | Theme skin pattern — `ThemeProvider` pushes a `ThemePrimitives` object into context; feature components consume primitives via `useTheme()` | Feature components are fully theme-agnostic. New themes require only a new theme module; zero changes to any feature component or page. Theme persisted in `localStorage`. |
 | Component docs   | Storybook 8                                                                                                                                 | Required by Prompt.md; stories run under a `ThemeProvider` decorator                                                                                                       |
+| SMS provider     | Twilio Messages API                                                                                                                         | Simpler onboarding than AWS SNS (no sandbox exit process, no CDK, just account SID + auth token + phone number)                                                            |
 | Test runner      | Vitest                                                                                                                                      | Fast, ESM-native, compatible with Next.js App Router                                                                                                                       |

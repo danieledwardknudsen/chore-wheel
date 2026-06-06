@@ -4,7 +4,7 @@
 
 A shared household chore management app. Users sign up with passkeys, view/manage chores, and receive daily SMS/email reminders via a scheduled batch job.
 
-**Stack:** Next.js (Vercel) · Neon Postgres (Drizzle ORM) · AWS SNS (CDK) · WebAuthn passkeys · pnpm monorepo · Turborepo
+**Stack:** Next.js (Vercel) · Neon Postgres (Drizzle ORM) · Twilio (SMS) · WebAuthn passkeys · pnpm monorepo · Turborepo
 
 See `README.md` for the full component diagram and system description. See `.planning/` for implementation phases and action checklist.
 
@@ -196,23 +196,16 @@ See `.planning/action-checklist.md` for which variables are needed and where to 
 
 ## Shell Tool Notes (Windows)
 
-- **AWS CLI** is installed at `C:\Program Files\Amazon\AWSCLIV2\aws.exe` but is not on the PATH within the Bash or PowerShell tools Claude Code uses. Always invoke it as:
+- All tools (node, pnpm, git, vercel) are on PATH and work normally in both Bash and PowerShell tools.
+- **AWS CLI** is installed at `C:\Program Files\Amazon\AWSCLIV2\aws.exe` but is NOT on the PATH within Claude Code's shell tools. If AWS CLI is ever needed (not required for this project), invoke it as:
   - Bash: `/c/Program\ Files/Amazon/AWSCLIV2/aws.exe`
   - PowerShell: `& "C:\Program Files\Amazon\AWSCLIV2\aws.exe"`
-- Similarly for CDK: use `& "C:\Program Files\Amazon\AWSCLIV2\aws.exe"` or the full node path if needed.
-- All other tools (node, pnpm, git, vercel) are on PATH and work normally in both shells.
 
 ---
 
 ## Vercel Cron Job
 
 The batch assignment job runs at `apps/web/src/app/api/jobs/assign-chores/route.ts`. It is protected by a `CRON_SECRET` header that Vercel injects automatically. Configure schedule in `vercel.json`.
-
----
-
-## AWS Infrastructure
-
-CDK app lives in `infrastructure/`. Deploy with `pnpm --filter @chore-wheel/infrastructure cdk deploy`. The CDK creates the SNS topic and IAM user whose credentials are used by the Next.js app.
 
 ---
 

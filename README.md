@@ -13,7 +13,7 @@ A shared household chore management app with a retro terminal UI.
      ┌───────────┼────────────────┐
      │           │                │
      ▼           ▼                ▼
-  Neon        iron-session     AWS SNS
+  Neon        iron-session     Twilio
   Postgres    (cookie auth)    (SMS)
   (Drizzle)
      │
@@ -32,7 +32,7 @@ A shared household chore management app with a retro terminal UI.
 | `apps/web`          | Next.js 14 app (UI + API routes + cron handler)                                       |
 | `packages/domain`   | Pure business logic (scheduling, assignment, expiration) with abstract I/O interfaces |
 | `packages/database` | Drizzle ORM schema, migrations, Postgres repository implementations                   |
-| `infrastructure`    | AWS CDK stack (SNS topic + IAM credentials for app)                                   |
+| `infrastructure`    | Empty stub — reserved for future AWS services (e.g. S3, SES); not used in v1          |
 
 ## Local Development
 
@@ -42,7 +42,7 @@ pnpm install
 
 # Copy environment variables
 cp apps/web/.env.example apps/web/.env.local
-# Fill in: DATABASE_URL, SESSION_SECRET, WEBAUTHN_*, AWS_*, CRON_SECRET
+# Fill in: DATABASE_URL, SESSION_SECRET, WEBAUTHN_*, TWILIO_*, CRON_SECRET
 
 # Apply DB migrations
 pnpm --filter @chore-wheel/database db:migrate
@@ -56,8 +56,7 @@ pnpm storybook
 # Run tests
 pnpm test
 
-# Deploy AWS infrastructure (one-time)
-cd infrastructure && pnpm cdk deploy
+# (No AWS infrastructure needed — SMS uses Twilio)
 ```
 
 ## Implementation Plan

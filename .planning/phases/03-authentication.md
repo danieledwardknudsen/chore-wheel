@@ -16,7 +16,7 @@ pnpm --filter @chore-wheel/web add -D \
   @types/iron-session
 ```
 
-AWS SNS for SMS is behind the abstract interface from Phase 04 — for Phase 03 we use a **stub sink** that logs the OTP to the console. Real SMS is wired in Phase 06.
+Twilio for SMS is behind the abstract interface from Phase 04 — for Phase 03 we use a **stub sink** that logs the OTP to the console. Real Twilio SMS is wired in Phase 06.
 
 ---
 
@@ -46,7 +46,7 @@ Session secret from `process.env.SESSION_SECRET`.
 - Body: `{ phone: string }`
 - Validates phone format (E.164).
 - Generates a 6-digit code, stores in `phone_verifications` with `expiresAt = now + 10 minutes`.
-- Calls the `PhoneVerificationSink` interface (stub in Phase 03, real SNS in Phase 06).
+- Calls the `PhoneVerificationSink` interface (stub in Phase 03, real Twilio in Phase 06).
 - Returns 200 (always — don't leak whether phone exists).
 
 `POST /api/auth/verify-phone-code`
