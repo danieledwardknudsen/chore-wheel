@@ -1,0 +1,16 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'infrastructure'
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver
+  - '@tailwindcss/oxide'
+  - esbuild
+  - core-js-pure
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
+  '@tailwindcss/oxide': true
+  esbuild: true
+  core-js-pure: true

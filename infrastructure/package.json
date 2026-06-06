@@ -1,0 +1,19 @@
+{
+  "name": "@chore-wheel/infrastructure",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "synth": "cdk synth",
+    "deploy": "cdk deploy --require-approval never",
+    "diff": "cdk diff",
+    "destroy": "cdk destroy",
+    "lint": "eslint src",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "typescript-eslint": "^8.60.1",
+    "vitest": "^3.2.6"
+  }
+}

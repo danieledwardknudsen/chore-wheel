@@ -1,0 +1,1 @@
+C:/Users/danie/OneDrive/Desktop/obsidian/daniel/code/projects/chore-wheel/Prompt.md
