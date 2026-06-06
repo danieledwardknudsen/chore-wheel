@@ -1,3 +1,4 @@
-// @chore-wheel/database — Drizzle ORM schema, migrations, and Postgres repository implementations
-// Exports added here as schema and repositories are implemented in Phases 02 and 05.
-export {};
+export * from './schema/index.js';
+export * from './client.js';
+export * from './validation/choreRuleScheduleConfig.js';
+export * from './validation/choreRuleAssigneeRule.js';
