@@ -19,6 +19,7 @@ export default defineConfig({
           name: 'node',
           environment: 'node',
           include: ['src/__tests__/api/**/*.test.ts'],
+          exclude: ['node_modules', 'e2e', '.next', 'src/__tests__/components/**'],
         },
       },
       {
