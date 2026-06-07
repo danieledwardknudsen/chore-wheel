@@ -1,15 +1,36 @@
+import { config } from 'dotenv';
+import { resolve } from 'path';
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+
+config({ path: resolve(__dirname, '.env.local') });
 
 export default defineConfig({
   plugins: [react()],
   test: {
-    environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test-setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
     exclude: ['node_modules', 'e2e', '.next'],
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'node',
+          environment: 'node',
+          include: ['src/__tests__/api/**/*.test.ts'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'browser',
+          environment: 'jsdom',
+          include: ['src/**/*.test.{ts,tsx}'],
+          exclude: ['src/__tests__/api/**'],
+        },
+      },
+    ],
   },
   resolve: {
     alias: {

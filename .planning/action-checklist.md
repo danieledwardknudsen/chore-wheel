@@ -40,13 +40,13 @@ This file tracks everything an agent cannot do autonomously. Check off each item
 
 ## Before Phase 03 — Authentication
 
-- [ ] **Set WebAuthn config values** in `.env.local`:
+- [x] **Set WebAuthn config values** in `.env.local`:
   - `WEBAUTHN_RP_NAME` — human-readable app name, e.g. `"Chore Wheel"`
   - `WEBAUTHN_RP_ID` — your domain (e.g. `chore-wheel.vercel.app` or your custom domain)
   - `WEBAUTHN_ORIGIN` — full origin URL, e.g. `https://chore-wheel.vercel.app`
   - For local dev: `WEBAUTHN_RP_ID=localhost`, `WEBAUTHN_ORIGIN=http://localhost:3000`
 
-- [ ] **Set session secret** in `.env.local`:
+- [x] **Set session secret** in `.env.local`:
   - `SESSION_SECRET` — a random 32+ byte hex string. Generate with: `openssl rand -hex 32`
 
 ---
@@ -55,19 +55,19 @@ This file tracks everything an agent cannot do autonomously. Check off each item
 
 No AWS setup required. SMS is handled by Twilio.
 
-- [ ] **Create a Twilio account** at https://twilio.com (free trial is enough for development).
+- [x] **Create a Twilio account** at https://twilio.com (free trial is enough for development).
 
-- [ ] **Get a Twilio phone number**:
+- [x] **Get a Twilio phone number**:
   - In the Twilio console: Phone Numbers → Manage → Buy a number.
   - A trial account gives you one free number. It can only SMS verified numbers until you upgrade — add your phone to the verified list for testing.
   - Note the number in E.164 format (e.g. `+12065551234`).
 
-- [ ] **Set Twilio credentials** in `.env.local`:
+- [x] **Set Twilio credentials** in `.env.local`:
   - `TWILIO_ACCOUNT_SID` — from the Twilio console dashboard
   - `TWILIO_AUTH_TOKEN` — from the Twilio console dashboard
   - `TWILIO_PHONE_NUMBER` — the E.164 number you purchased
 
-- [ ] **Set cron secret** in `.env.local`:
+- [x] **Set cron secret** in `.env.local`:
   - `CRON_SECRET` — random string used by Vercel to authenticate cron requests. Generate with `openssl rand -hex 32`.
 
 ---
