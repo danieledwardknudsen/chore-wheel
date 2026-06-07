@@ -1,4 +1,4 @@
-import { Client, Pool, PoolClient } from '@neondatabase/serverless';
+﻿import { Client, Pool, PoolClient } from '@neondatabase/serverless';
 import { eq } from 'drizzle-orm';
 import { drizzle, NeonDatabase } from 'drizzle-orm/neon-serverless';
 import { neon } from '@neondatabase/serverless';
@@ -7,7 +7,7 @@ import { migrate } from 'drizzle-orm/neon-http/migrator';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import * as schema from '../schema/index.js';
+import * as schema from '../schema/index';
 
 const TEST_URL = process.env['DATABASE_URL_TEST']!;
 const migrationsFolder = join(dirname(fileURLToPath(import.meta.url)), '../../migrations');

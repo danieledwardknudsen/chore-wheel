@@ -1,6 +1,6 @@
-import { date, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
-import { choreRules } from './choreRules.js';
-import { users } from './users.js';
+﻿import { date, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { choreRules } from './choreRules';
+import { users } from './users';
 
 export const chores = pgTable('chores', {
   id: uuid('id').primaryKey().defaultRandom(),

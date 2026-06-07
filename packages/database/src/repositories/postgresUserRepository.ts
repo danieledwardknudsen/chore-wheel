@@ -1,8 +1,8 @@
-import type { UserRepository } from '@chore-wheel/domain';
+﻿import type { UserRepository } from '@chore-wheel/domain';
 import type { User } from '@chore-wheel/domain';
 import { asc, eq } from 'drizzle-orm';
-import type { DatabaseClient } from '../client.js';
-import { users } from '../schema/index.js';
+import type { DatabaseClient } from '../client';
+import { users } from '../schema/index';
 
 const mapUser = (row: typeof users.$inferSelect): User => ({
   id: row.id,

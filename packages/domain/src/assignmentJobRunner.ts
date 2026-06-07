@@ -1,10 +1,10 @@
-import { calculateAssignee } from './assignmentCalculator.js';
-import { shouldExpireChore } from './expirationEvaluator.js';
-import { shouldCreateChoreToday } from './scheduleEvaluator.js';
-import type { ChoreRepository } from './interfaces/choreRepository.js';
-import type { ChoreRuleRepository } from './interfaces/choreRuleRepository.js';
-import type { NotificationSink } from './interfaces/notificationSink.js';
-import type { UserRepository } from './interfaces/userRepository.js';
+﻿import { calculateAssignee } from './assignmentCalculator';
+import { shouldExpireChore } from './expirationEvaluator';
+import { shouldCreateChoreToday } from './scheduleEvaluator';
+import type { ChoreRepository } from './interfaces/choreRepository';
+import type { ChoreRuleRepository } from './interfaces/choreRuleRepository';
+import type { NotificationSink } from './interfaces/notificationSink';
+import type { UserRepository } from './interfaces/userRepository';
 
 export type AssignmentJobConfig = {
   sendNotifications: boolean;

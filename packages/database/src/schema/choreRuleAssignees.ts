@@ -1,6 +1,6 @@
-import { integer, numeric, pgTable, uuid } from 'drizzle-orm/pg-core';
-import { choreRules } from './choreRules.js';
-import { users } from './users.js';
+﻿import { integer, numeric, pgTable, uuid } from 'drizzle-orm/pg-core';
+import { choreRules } from './choreRules';
+import { users } from './users';
 
 export const choreRuleAssignees = pgTable('chore_rule_assignees', {
   id: uuid('id').primaryKey().defaultRandom(),

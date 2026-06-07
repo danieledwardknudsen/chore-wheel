@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { isVerificationCodeExpired } from '../../auth/isVerificationCodeExpired.js';
+﻿import { describe, expect, it } from 'vitest';
+import { isVerificationCodeExpired } from '../../auth/isVerificationCodeExpired';
 
 describe('isVerificationCodeExpired', () => {
   it('returns true when expiresAt is in the past', () => {

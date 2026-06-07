@@ -1,5 +1,5 @@
-import { bigint, boolean, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
-import { users } from './users.js';
+﻿import { bigint, boolean, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { users } from './users';
 
 export const passkeys = pgTable('passkeys', {
   id: uuid('id').primaryKey().defaultRandom(),

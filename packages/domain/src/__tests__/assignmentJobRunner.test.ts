@@ -1,12 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { runAssignmentJob } from '../assignmentJobRunner.js';
-import { InMemoryChoreRepository } from '../testing/inMemoryChoreRepository.js';
-import { InMemoryChoreRuleRepository } from '../testing/inMemoryChoreRuleRepository.js';
-import { InMemoryUserRepository } from '../testing/inMemoryUserRepository.js';
-import { ConsoleNotificationSink } from '../testing/consoleNotificationSink.js';
-import type { ChoreRule } from '../types/choreRule.js';
-import type { Chore } from '../types/chore.js';
-import type { User } from '../types/user.js';
+﻿import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { runAssignmentJob } from '../assignmentJobRunner';
+import { InMemoryChoreRepository } from '../testing/inMemoryChoreRepository';
+import { InMemoryChoreRuleRepository } from '../testing/inMemoryChoreRuleRepository';
+import { InMemoryUserRepository } from '../testing/inMemoryUserRepository';
+import { ConsoleNotificationSink } from '../testing/consoleNotificationSink';
+import type { ChoreRule } from '../types/choreRule';
+import type { Chore } from '../types/chore';
+import type { User } from '../types/user';
 
 const TODAY = new Date('2024-06-17T12:00:00Z'); // Monday (UTC noon)
 
@@ -86,7 +86,7 @@ describe('runAssignmentJob', () => {
     void tomorrow; // suppress unused warning
   });
 
-  it('is idempotent — running twice on the same day does not duplicate chores', async () => {
+  it('is idempotent â€” running twice on the same day does not duplicate chores', async () => {
     const choreRules = new InMemoryChoreRuleRepository([dailyRule('rule-1', 'Dishes')]);
     const chores = new InMemoryChoreRepository([]);
     const users = new InMemoryUserRepository([]);

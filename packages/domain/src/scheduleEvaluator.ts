@@ -1,4 +1,4 @@
-import type { ChoreRule, RecurringSchedule } from './types/choreRule.js';
+﻿import type { ChoreRule, RecurringSchedule } from './types/choreRule';
 
 const toUTCDateString = (date: Date): string => {
   const y = date.getUTCFullYear();

@@ -1,16 +1,16 @@
-export * from './users.js';
-export * from './passkeys.js';
-export * from './phoneVerifications.js';
-export * from './choreRules.js';
-export * from './choreRuleAssignees.js';
-export * from './chores.js';
+﻿export * from './users';
+export * from './passkeys';
+export * from './phoneVerifications';
+export * from './choreRules';
+export * from './choreRuleAssignees';
+export * from './chores';
 
 import { relations } from 'drizzle-orm';
-import { users } from './users.js';
-import { passkeys } from './passkeys.js';
-import { choreRules } from './choreRules.js';
-import { choreRuleAssignees } from './choreRuleAssignees.js';
-import { chores } from './chores.js';
+import { users } from './users';
+import { passkeys } from './passkeys';
+import { choreRules } from './choreRules';
+import { choreRuleAssignees } from './choreRuleAssignees';
+import { chores } from './chores';
 
 export const usersRelations = relations(users, ({ many, one: _one }) => ({
   passkeys: many(passkeys),

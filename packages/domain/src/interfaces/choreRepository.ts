@@ -1,4 +1,4 @@
-import type { Chore, ChoreStatus, CreateChoreInput } from '../types/chore.js';
+﻿import type { Chore, ChoreStatus, CreateChoreInput } from '../types/chore';
 
 export interface ChoreRepository {
   findExistingForRuleAndDate(ruleId: string, dueDate: Date): Promise<Chore | null>;

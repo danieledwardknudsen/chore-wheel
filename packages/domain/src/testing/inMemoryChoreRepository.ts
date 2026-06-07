@@ -1,5 +1,5 @@
-import type { ChoreRepository } from '../interfaces/choreRepository.js';
-import type { Chore, ChoreStatus, CreateChoreInput } from '../types/chore.js';
+﻿import type { ChoreRepository } from '../interfaces/choreRepository';
+import type { Chore, ChoreStatus, CreateChoreInput } from '../types/chore';
 
 let nextId = 1;
 const generateId = () => `chore-mem-${nextId++}`;

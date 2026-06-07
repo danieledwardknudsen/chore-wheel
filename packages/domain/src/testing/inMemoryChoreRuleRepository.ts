@@ -1,5 +1,5 @@
-import type { ChoreRuleRepository } from '../interfaces/choreRuleRepository.js';
-import type { ChoreAssignment, ChoreRule, ChoreRuleAssignee } from '../types/choreRule.js';
+﻿import type { ChoreRuleRepository } from '../interfaces/choreRuleRepository';
+import type { ChoreAssignment, ChoreRule, ChoreRuleAssignee } from '../types/choreRule';
 
 export class InMemoryChoreRuleRepository implements ChoreRuleRepository {
   private readonly rules: ChoreRule[];

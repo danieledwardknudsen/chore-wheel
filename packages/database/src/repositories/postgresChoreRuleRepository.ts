@@ -1,13 +1,13 @@
-import type {
+﻿import type {
   ChoreAssignment,
   ChoreRule,
   ChoreRuleAssignee,
   ChoreRuleRepository,
 } from '@chore-wheel/domain';
 import { and, desc, eq, isNotNull } from 'drizzle-orm';
-import type { DatabaseClient } from '../client.js';
-import { choreRuleAssignees, choreRules, chores } from '../schema/index.js';
-import { choreRuleScheduleConfigSchema } from '../validation/choreRuleScheduleConfig.js';
+import type { DatabaseClient } from '../client';
+import { choreRuleAssignees, choreRules, chores } from '../schema/index';
+import { choreRuleScheduleConfigSchema } from '../validation/choreRuleScheduleConfig';
 import type { AssigneeRuleType, ChoreSchedule } from '@chore-wheel/domain';
 
 const mapChoreRule = (row: typeof choreRules.$inferSelect): ChoreRule => ({

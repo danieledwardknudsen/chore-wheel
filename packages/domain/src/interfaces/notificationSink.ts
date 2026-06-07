@@ -1,5 +1,5 @@
-import type { Chore } from '../types/chore.js';
-import type { User } from '../types/user.js';
+﻿import type { Chore } from '../types/chore';
+import type { User } from '../types/user';
 
 export interface NotificationSink {
   sendDailySummary(

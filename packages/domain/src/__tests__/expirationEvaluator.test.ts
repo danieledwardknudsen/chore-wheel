@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { shouldExpireChore } from '../expirationEvaluator.js';
-import type { Chore } from '../types/chore.js';
+﻿import { describe, expect, it } from 'vitest';
+import { shouldExpireChore } from '../expirationEvaluator';
+import type { Chore } from '../types/chore';
 
 const makeChore = (overrides: Partial<Chore> = {}): Chore => ({
   id: 'chore-1',

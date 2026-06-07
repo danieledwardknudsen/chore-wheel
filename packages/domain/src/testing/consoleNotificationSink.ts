@@ -1,6 +1,6 @@
-import type { NotificationSink } from '../interfaces/notificationSink.js';
-import type { Chore } from '../types/chore.js';
-import type { User } from '../types/user.js';
+﻿import type { NotificationSink } from '../interfaces/notificationSink';
+import type { Chore } from '../types/chore';
+import type { User } from '../types/user';
 
 export class ConsoleNotificationSink implements NotificationSink {
   async sendDailySummary(
@@ -10,7 +10,7 @@ export class ConsoleNotificationSink implements NotificationSink {
     websiteUrl: string,
   ): Promise<void> {
     console.log(
-      `[Notification] ${user.name}: ${assignedChores.length} assigned, ${unassignedChores.length} unassigned — ${websiteUrl}`,
+      `[Notification] ${user.name}: ${assignedChores.length} assigned, ${unassignedChores.length} unassigned â€” ${websiteUrl}`,
     );
   }
 }

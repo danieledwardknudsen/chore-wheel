@@ -1,4 +1,4 @@
-import type { ChoreAssignment, ChoreRule, ChoreRuleAssignee } from './types/choreRule.js';
+﻿import type { ChoreAssignment, ChoreRule, ChoreRuleAssignee } from './types/choreRule';
 
 const calculateRoundRobin = (
   assignees: ChoreRuleAssignee[],

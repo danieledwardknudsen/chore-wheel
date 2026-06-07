@@ -1,5 +1,5 @@
-import type { UserRepository } from '../interfaces/userRepository.js';
-import type { User } from '../types/user.js';
+﻿import type { UserRepository } from '../interfaces/userRepository';
+import type { User } from '../types/user';
 
 export class InMemoryUserRepository implements UserRepository {
   private readonly users: User[];

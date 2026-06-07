@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: ['@chore-wheel/domain', '@chore-wheel/database'],
 };
 
 export default nextConfig;

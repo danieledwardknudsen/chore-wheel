@@ -1,4 +1,4 @@
-import type { PhoneVerificationSink } from '../interfaces/phoneVerificationSink.js';
+﻿import type { PhoneVerificationSink } from '../interfaces/phoneVerificationSink';
 
 export class ConsolePhoneVerificationSink implements PhoneVerificationSink {
   async sendVerificationCode(phone: string, code: string): Promise<void> {

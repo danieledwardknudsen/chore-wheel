@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { calculateAssignee } from '../assignmentCalculator.js';
-import type { ChoreAssignment, ChoreRule, ChoreRuleAssignee } from '../types/choreRule.js';
+﻿import { describe, expect, it } from 'vitest';
+import { calculateAssignee } from '../assignmentCalculator';
+import type { ChoreAssignment, ChoreRule, ChoreRuleAssignee } from '../types/choreRule';
 
 const baseRule = (overrides: Partial<ChoreRule> = {}): ChoreRule => ({
   id: 'rule-1',
@@ -27,7 +27,7 @@ const assignment = (assigneeId: string): ChoreAssignment => ({
   assigneeId,
 });
 
-describe('calculateAssignee — static', () => {
+describe('calculateAssignee â€” static', () => {
   it('returns the static assignee id', () => {
     const rule = baseRule({ assigneeRuleType: 'static', staticAssigneeId: 'user-a' });
     expect(calculateAssignee(rule, [], [])).toBe('user-a');
@@ -39,14 +39,14 @@ describe('calculateAssignee — static', () => {
   });
 });
 
-describe('calculateAssignee — free_for_all', () => {
+describe('calculateAssignee â€” free_for_all', () => {
   it('always returns null', () => {
     const rule = baseRule({ assigneeRuleType: 'free_for_all' });
     expect(calculateAssignee(rule, [assignee('user-a', 0)], [])).toBe(null);
   });
 });
 
-describe('calculateAssignee — round_robin', () => {
+describe('calculateAssignee â€” round_robin', () => {
   it('returns the first assignee by position when no prior assignments exist', () => {
     const rule = baseRule();
     const assignees = [assignee('user-b', 1), assignee('user-a', 0)];
@@ -56,7 +56,7 @@ describe('calculateAssignee — round_robin', () => {
   it('returns the assignee with the largest deficit after one assignment', () => {
     const rule = baseRule();
     const assignees = [assignee('user-a', 0), assignee('user-b', 1)];
-    // user-a was assigned once; user-b has deficit of 0.5 - 0 = 0.5 → user-b
+    // user-a was assigned once; user-b has deficit of 0.5 - 0 = 0.5 â†’ user-b
     expect(calculateAssignee(rule, assignees, [assignment('user-a')])).toBe('user-b');
   });
 
@@ -64,28 +64,28 @@ describe('calculateAssignee — round_robin', () => {
     const rule = baseRule();
     const assignees = [assignee('user-a', 0), assignee('user-b', 1)];
 
-    // Round 1: no history → user-a
+    // Round 1: no history â†’ user-a
     const r1 = calculateAssignee(rule, assignees, []);
     expect(r1).toBe('user-a');
 
-    // Round 2: user-a was assigned → user-b
+    // Round 2: user-a was assigned â†’ user-b
     const r2 = calculateAssignee(rule, assignees, [assignment('user-a')]);
     expect(r2).toBe('user-b');
 
-    // Round 3: both assigned once → tied → user-a (first by position)
+    // Round 3: both assigned once â†’ tied â†’ user-a (first by position)
     const r3 = calculateAssignee(rule, assignees, [assignment('user-a'), assignment('user-b')]);
     expect(r3).toBe('user-a');
   });
 
   it('respects unequal weights', () => {
     const rule = baseRule();
-    // user-a weight=3, user-b weight=1 → targets: 0.75 / 0.25
+    // user-a weight=3, user-b weight=1 â†’ targets: 0.75 / 0.25
     const assignees = [assignee('user-a', 0, 3), assignee('user-b', 1, 1)];
 
-    // After 1 assignment to user-a: deficit user-a=0.75-1=-0.25, user-b=0.25-0=0.25 → user-b
+    // After 1 assignment to user-a: deficit user-a=0.75-1=-0.25, user-b=0.25-0=0.25 â†’ user-b
     expect(calculateAssignee(rule, assignees, [assignment('user-a')])).toBe('user-b');
 
-    // After 1 to user-a, 1 to user-b: deficit user-a=0.75-0.5=0.25, user-b=0.25-0.5=-0.25 → user-a
+    // After 1 to user-a, 1 to user-b: deficit user-a=0.75-0.5=0.25, user-b=0.25-0.5=-0.25 â†’ user-a
     expect(calculateAssignee(rule, assignees, [assignment('user-a'), assignment('user-b')])).toBe(
       'user-a',
     );
@@ -96,7 +96,7 @@ describe('calculateAssignee — round_robin', () => {
     const assignees = [assignee('user-a', 0), assignee('user-b', 1)];
     // user-deleted was in history but is no longer an assignee
     const history = [assignment('user-deleted'), assignment('user-deleted')];
-    // No relevant assignments → user-a by position
+    // No relevant assignments â†’ user-a by position
     expect(calculateAssignee(rule, assignees, history)).toBe('user-a');
   });
 

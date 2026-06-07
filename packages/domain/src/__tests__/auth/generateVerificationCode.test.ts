@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { generateVerificationCode } from '../../auth/generateVerificationCode.js';
+﻿import { describe, expect, it } from 'vitest';
+import { generateVerificationCode } from '../../auth/generateVerificationCode';
 
 describe('generateVerificationCode', () => {
   it('returns a 6-character string', () => {

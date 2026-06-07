@@ -1,5 +1,5 @@
-import { jsonb, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
-import { users } from './users.js';
+﻿import { jsonb, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { users } from './users';
 
 export const choreRules = pgTable('chore_rules', {
   id: uuid('id').primaryKey().defaultRandom(),

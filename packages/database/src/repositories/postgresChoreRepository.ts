@@ -1,8 +1,8 @@
-import type { ChoreRepository } from '@chore-wheel/domain';
+﻿import type { ChoreRepository } from '@chore-wheel/domain';
 import type { Chore, ChoreStatus, CreateChoreInput } from '@chore-wheel/domain';
 import { and, desc, eq, isNull, lt, ne } from 'drizzle-orm';
-import type { DatabaseClient } from '../client.js';
-import { chores } from '../schema/index.js';
+import type { DatabaseClient } from '../client';
+import { chores } from '../schema/index';
 
 const toUTCDateString = (d: Date): string =>
   `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;

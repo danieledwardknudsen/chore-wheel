@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { shouldCreateChoreToday } from '../scheduleEvaluator.js';
-import type { ChoreRule } from '../types/choreRule.js';
+﻿import { describe, expect, it } from 'vitest';
+import { shouldCreateChoreToday } from '../scheduleEvaluator';
+import type { ChoreRule } from '../types/choreRule';
 
 const baseRule = (overrides: Partial<ChoreRule> = {}): ChoreRule => ({
   id: 'rule-1',
@@ -15,7 +15,7 @@ const baseRule = (overrides: Partial<ChoreRule> = {}): ChoreRule => ({
 
 const date = (iso: string) => new Date(`${iso}T12:00:00Z`); // explicit UTC so getUTC* methods are timezone-safe
 
-describe('shouldCreateChoreToday — one_off', () => {
+describe('shouldCreateChoreToday â€” one_off', () => {
   it('returns true when today matches the one-off date', () => {
     const rule = baseRule({ schedule: { type: 'one_off', date: '2024-06-15' } });
     expect(shouldCreateChoreToday(rule, date('2024-06-15'))).toBe(true);
@@ -28,7 +28,7 @@ describe('shouldCreateChoreToday — one_off', () => {
   });
 });
 
-describe('shouldCreateChoreToday — daily', () => {
+describe('shouldCreateChoreToday â€” daily', () => {
   it('returns true every day', () => {
     const rule = baseRule({
       scheduleType: 'recurring',
@@ -40,7 +40,7 @@ describe('shouldCreateChoreToday — daily', () => {
   });
 });
 
-describe('shouldCreateChoreToday — weekly', () => {
+describe('shouldCreateChoreToday â€” weekly', () => {
   it('returns true on the specified day of week', () => {
     // 2024-06-17 is a Monday (dayOfWeek = 1)
     const rule = baseRule({
@@ -70,11 +70,11 @@ describe('shouldCreateChoreToday — weekly', () => {
   });
 });
 
-describe('shouldCreateChoreToday — biweekly', () => {
-  // Reference epoch: 1970-01-05 (first Monday). Week 0 = Jan 5–11.
-  // 2024-06-17 (Monday): days since epoch = 19886, weeksSinceEpoch = 2841 (odd → false for even check)
-  // 2024-06-10 (Monday): days since epoch = 19879, weeksSinceEpoch = 2839 (odd → false)
-  // 2024-06-03 (Monday): days since epoch = 19872, weeksSinceEpoch = 2838 (even → true)
+describe('shouldCreateChoreToday â€” biweekly', () => {
+  // Reference epoch: 1970-01-05 (first Monday). Week 0 = Jan 5â€“11.
+  // 2024-06-17 (Monday): days since epoch = 19886, weeksSinceEpoch = 2841 (odd â†’ false for even check)
+  // 2024-06-10 (Monday): days since epoch = 19879, weeksSinceEpoch = 2839 (odd â†’ false)
+  // 2024-06-03 (Monday): days since epoch = 19872, weeksSinceEpoch = 2838 (even â†’ true)
   it('returns true on the right biweekly Monday', () => {
     const rule = baseRule({
       scheduleType: 'recurring',
@@ -99,7 +99,7 @@ describe('shouldCreateChoreToday — biweekly', () => {
   });
 });
 
-describe('shouldCreateChoreToday — monthly', () => {
+describe('shouldCreateChoreToday â€” monthly', () => {
   it('returns true on the specified day of month', () => {
     const rule = baseRule({
       scheduleType: 'recurring',
@@ -129,7 +129,7 @@ describe('shouldCreateChoreToday — monthly', () => {
     // April has 30 days
     expect(shouldCreateChoreToday(rule, date('2024-04-30'))).toBe(true);
     expect(shouldCreateChoreToday(rule, date('2024-04-29'))).toBe(false);
-    // January has 31 days — exact match
+    // January has 31 days â€” exact match
     expect(shouldCreateChoreToday(rule, date('2024-01-31'))).toBe(true);
   });
 
