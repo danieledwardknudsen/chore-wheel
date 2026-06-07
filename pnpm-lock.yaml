@@ -49,6 +49,9 @@ importers:
       react-dom:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@neondatabase/serverless':
         specifier: ^1.1.0
@@ -137,6 +140,9 @@ importers:
 
   packages/database:
     dependencies:
+      '@chore-wheel/domain':
+        specifier: workspace:*
+        version: link:../domain
       '@neondatabase/serverless':
         specifier: ^1.1.0
         version: 1.1.0

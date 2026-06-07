@@ -1,4 +1,4 @@
-export type ChoreStatus = 'incomplete' | 'complete' | 'expired';
+export type ChoreStatus = 'incomplete' | 'complete' | 'expired' | 'canceled';
 
 export type Chore = {
   id: string;
