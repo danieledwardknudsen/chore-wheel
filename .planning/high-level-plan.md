@@ -9,11 +9,13 @@ Phase 01 — Repo & Tooling          (no dependencies)
   └── Phase 02 — Database Schema   (needs 01: monorepo & Drizzle)
         └── Phase 03 — Auth        (needs 02: users & passkeys tables)
               └── Phase 04 — Domain Logic   (needs 02: schema types)
-                    └── Phase 05 — API Layer         (needs 02, 03, 04)
-                          └── Phase 06 — Batch Job   (needs 04, 05)
-                                └── Phase 07 — Frontend Foundation  (needs 03, 05)
-                                      └── Phase 08 — Frontend Features (needs 05, 06, 07)
+                    └── Phase 05 — API Layer              (needs 02, 03, 04)
+                          └── Phase 07 — Frontend Foundation  (needs 03, 05)
+                                └── Phase 08 — Frontend Features (needs 05, 07)
+                                      └── Phase 06 — Batch Job  (needs 04, 05)
 ```
+
+> **Note:** Phase 06 (Batch Job) is deferred to after the frontend is complete. Phase 07 does not depend on Phase 06 — it only needs auth (03) and the API layer (05).
 
 Phase 09 (AWS Infrastructure) is **removed** — Twilio is used for SMS, so there is no AWS infrastructure.
 

@@ -74,6 +74,8 @@ No AWS setup required. SMS is handled by Twilio.
 
 ## Before Phase 07 — Frontend (Vercel Deployment)
 
+> **Phase order change:** Phase 06 (Batch Job) is now deferred to after Phase 08. Start Phase 07 immediately after Phase 05.
+
 - [ ] **Link the project to Vercel**:
 
   ```
@@ -90,10 +92,6 @@ No AWS setup required. SMS is handled by Twilio.
   - `WEBAUTHN_RP_NAME`
   - `WEBAUTHN_RP_ID`
   - `WEBAUTHN_ORIGIN`
-  - `AWS_REGION`
-  - `AWS_ACCESS_KEY_ID`
-  - `AWS_SECRET_ACCESS_KEY`
-  - `SNS_TOPIC_ARN_SMS`
   - `CRON_SECRET`
 
 - [ ] **Set a custom domain** (optional but recommended for passkeys):

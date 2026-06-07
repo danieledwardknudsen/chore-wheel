@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# @chore-wheel/web
 
-## Getting Started
+Next.js 16 app (App Router, TypeScript strict) for Chore Wheel.
 
-First, run the development server:
+## Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+src/
+├── app/                        # Next.js App Router pages and layouts
+│   ├── layout.tsx              # Root layout: ThemeProvider + NavBar
+│   ├── page.tsx                # Home — redirects to /login or /chores
+│   ├── login/page.tsx          # Sign-in page (passkey)
+│   ├── register/page.tsx       # Multi-step sign-up (phone verify → passkey)
+│   └── api/                    # Route handlers
+│       ├── auth/               # Registration, login, phone verification, logout
+│       ├── chore-rules/        # CRUD for chore rules + assignees
+│       ├── chores/             # CRUD + actions (complete, cancel, reassign)
+│       ├── users/              # User profile (me) + list
+│       └── jobs/               # Manual job trigger + Vercel cron endpoint
+├── components/features/        # Business-logic-aware components
+│   └── NavBar.tsx              # Auth-aware navigation bar (server component)
+├── context/
+│   └── ThemeContext.tsx        # ThemeProvider + useTheme (client)
+├── hooks/
+│   └── useTheme.ts             # Re-export of useTheme from ThemeContext
+├── themes/
+│   ├── types.ts                # ThemePrimitives interface + all prop types
+│   ├── index.ts                # Theme registry { terminal: terminalTheme }
+│   └── terminal/
+│       ├── index.tsx           # Terminal theme: all 11 primitive implementations
+│       └── primitives.stories.tsx  # Storybook stories for every primitive
+├── lib/
+│   ├── db.ts                   # Drizzle DB client (singleton)
+│   └── session.ts              # iron-session helpers
+└── middleware.ts               # Auth guard (redirects unauthenticated users)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Theming
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Feature components access all UI primitives via `useTheme().primitives`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```tsx
+const { Box, Button, Badge } = useTheme().primitives;
+```
 
-## Learn More
+Primitives: `Box`, `Button`, `Input`, `Label`, `Badge`, `Modal`, `Spinner`, `Toast`, `Toggle`, `Tabs`, `UserChip`.
 
-To learn more about Next.js, take a look at the following resources:
+Add themes by implementing `ThemePrimitives` in `src/themes/<name>/index.tsx` and registering in `src/themes/index.ts`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm dev           # Next.js dev server
+pnpm storybook     # Storybook
+pnpm test          # Vitest integration tests
+pnpm type-check    # tsc --noEmit
+pnpm lint          # ESLint
+```
