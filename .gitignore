@@ -31,6 +31,9 @@ Thumbs.db
 .vscode/settings.json
 .idea/
 
+# Planning docs (may contain secrets)
+.planning/
+
 # Test
 coverage/
 playwright-report/
