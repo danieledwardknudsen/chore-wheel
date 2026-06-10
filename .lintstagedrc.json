@@ -1,4 +1,5 @@
 {
   "**/*.{ts,tsx,mts,cts}": ["prettier --write"],
-  "**/*.{js,mjs,cjs,json,md,yaml,yml}": ["prettier --write"]
+  "**/*.{js,mjs,cjs,json,md,yaml,yml}": ["prettier --write"],
+  "**/*": ["secretlint"]
 }

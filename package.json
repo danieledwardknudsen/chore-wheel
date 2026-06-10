@@ -12,9 +12,12 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@secretlint/secretlint-rule-no-dotenv": "^13.0.2",
+    "@secretlint/secretlint-rule-preset-recommend": "^13.0.2",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.7",
     "prettier": "^3.4.2",
+    "secretlint": "^13.0.2",
     "turbo": "^2.5.4"
   }
 }
