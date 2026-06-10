@@ -61,6 +61,21 @@ export const ScheduleBuilder = ({
 
       {value.type === 'recurring' && (
         <div className="flex flex-col gap-2">
+          <Input
+            label="Start date (optional)"
+            name="scheduleStartDate"
+            type="date"
+            value={value.startDate ?? ''}
+            onChange={(e) => {
+              if (e.target.value) {
+                onChange({ ...value, startDate: e.target.value });
+              } else {
+                const next = { ...value };
+                delete next.startDate;
+                onChange(next);
+              }
+            }}
+          />
           <div>
             <Label htmlFor="frequency">Frequency</Label>
             <div className="mt-1">

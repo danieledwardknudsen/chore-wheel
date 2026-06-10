@@ -10,10 +10,17 @@ const toUTCDateString = (date: Date): string => {
 const lastDayOfMonth = (date: Date): number =>
   new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate();
 
-// Fixed Monday epoch for consistent biweekly week-parity calculation.
+// Fixed Monday epoch used for biweekly parity when no startDate anchors it.
 const BIWEEKLY_EPOCH = new Date('1970-01-05');
 
+const MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
+
 const recurringFires = (schedule: RecurringSchedule, today: Date): boolean => {
+  // A startDate gates the whole schedule: nothing fires before it.
+  if (schedule.startDate !== undefined && toUTCDateString(today) < schedule.startDate) {
+    return false;
+  }
+
   const todayDow = today.getUTCDay();
   const todayDom = today.getUTCDate();
 
@@ -26,10 +33,12 @@ const recurringFires = (schedule: RecurringSchedule, today: Date): boolean => {
 
     case 'biweekly': {
       if (schedule.dayOfWeek !== undefined && todayDow !== schedule.dayOfWeek) return false;
-      const daysSinceEpoch = Math.floor(
-        (today.getTime() - BIWEEKLY_EPOCH.getTime()) / (1000 * 60 * 60 * 24),
-      );
-      return Math.floor(daysSinceEpoch / 7) % 2 === 0;
+      // Anchor week parity to startDate when provided, otherwise the fixed epoch.
+      const anchor = schedule.startDate
+        ? new Date(`${schedule.startDate}T00:00:00Z`)
+        : BIWEEKLY_EPOCH;
+      const daysSinceAnchor = Math.floor((today.getTime() - anchor.getTime()) / MILLIS_PER_DAY);
+      return Math.floor(daysSinceAnchor / 7) % 2 === 0;
     }
 
     case 'monthly': {

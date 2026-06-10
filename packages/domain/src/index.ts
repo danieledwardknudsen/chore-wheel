@@ -4,6 +4,7 @@ export * from './interfaces/notificationSink';
 export * from './interfaces/userRepository';
 export * from './assignmentCalculator';
 export * from './assignmentJobRunner';
+export * from './createChoreForRuleIfDue';
 export * from './expirationEvaluator';
 export * from './scheduleEvaluator';
 export * from './types/chore';

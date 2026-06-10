@@ -141,3 +141,72 @@ describe('shouldCreateChoreToday â€” monthly', () => {
     expect(shouldCreateChoreToday(rule, date('2024-01-15'))).toBe(false);
   });
 });
+
+describe('shouldCreateChoreToday — recurring startDate gating', () => {
+  it('does not fire before the start date', () => {
+    const rule = baseRule({
+      scheduleType: 'recurring',
+      schedule: { type: 'recurring', frequency: 'daily', startDate: '2024-06-15' },
+    });
+    expect(shouldCreateChoreToday(rule, date('2024-06-14'))).toBe(false);
+  });
+
+  it('fires on the start date', () => {
+    const rule = baseRule({
+      scheduleType: 'recurring',
+      schedule: { type: 'recurring', frequency: 'daily', startDate: '2024-06-15' },
+    });
+    expect(shouldCreateChoreToday(rule, date('2024-06-15'))).toBe(true);
+  });
+
+  it('fires after the start date', () => {
+    const rule = baseRule({
+      scheduleType: 'recurring',
+      schedule: { type: 'recurring', frequency: 'daily', startDate: '2024-06-15' },
+    });
+    expect(shouldCreateChoreToday(rule, date('2024-06-20'))).toBe(true);
+  });
+
+  it('still honors the frequency rule on/after the start date', () => {
+    // Weekly Monday, starting 2024-06-10 (a Monday)
+    const rule = baseRule({
+      scheduleType: 'recurring',
+      schedule: { type: 'recurring', frequency: 'weekly', dayOfWeek: 1, startDate: '2024-06-10' },
+    });
+    expect(shouldCreateChoreToday(rule, date('2024-06-10'))).toBe(true); // Monday on/after start
+    expect(shouldCreateChoreToday(rule, date('2024-06-11'))).toBe(false); // Tuesday
+    expect(shouldCreateChoreToday(rule, date('2024-06-03'))).toBe(false); // Monday before start
+  });
+});
+
+describe('shouldCreateChoreToday — biweekly anchored to startDate', () => {
+  it('fires on the start date and every two weeks after, on the matching weekday', () => {
+    // Start on Monday 2024-06-03
+    const rule = baseRule({
+      scheduleType: 'recurring',
+      schedule: {
+        type: 'recurring',
+        frequency: 'biweekly',
+        dayOfWeek: 1,
+        startDate: '2024-06-03',
+      },
+    });
+    expect(shouldCreateChoreToday(rule, date('2024-06-03'))).toBe(true); // week 0
+    expect(shouldCreateChoreToday(rule, date('2024-06-10'))).toBe(false); // week 1
+    expect(shouldCreateChoreToday(rule, date('2024-06-17'))).toBe(true); // week 2
+    expect(shouldCreateChoreToday(rule, date('2024-06-24'))).toBe(false); // week 3
+  });
+
+  it('does not fire before the start date even on an otherwise-matching biweekly week', () => {
+    const rule = baseRule({
+      scheduleType: 'recurring',
+      schedule: {
+        type: 'recurring',
+        frequency: 'biweekly',
+        dayOfWeek: 1,
+        startDate: '2024-06-03',
+      },
+    });
+    expect(shouldCreateChoreToday(rule, date('2024-05-20'))).toBe(false); // Monday, 2 weeks before
+  });
+});

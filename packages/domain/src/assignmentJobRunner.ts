@@ -1,6 +1,5 @@
-﻿import { calculateAssignee } from './assignmentCalculator';
+﻿import { createChoreForRuleIfDue } from './createChoreForRuleIfDue';
 import { shouldExpireChore } from './expirationEvaluator';
-import { shouldCreateChoreToday } from './scheduleEvaluator';
 import type { ChoreRepository } from './interfaces/choreRepository';
 import type { ChoreRuleRepository } from './interfaces/choreRuleRepository';
 import type { NotificationSink } from './interfaces/notificationSink';
@@ -41,22 +40,8 @@ export const runAssignmentJob = async (
   // Step 2: Create chores for active rules that fire today.
   const activeRules = await repos.choreRules.findAllActive();
   for (const rule of activeRules) {
-    if (!shouldCreateChoreToday(rule, today)) continue;
-
-    const existing = await repos.chores.findExistingForRuleAndDate(rule.id, today);
-    if (existing) continue;
-
-    const assignees = await repos.choreRules.findAssigneesForRule(rule.id);
-    const recentAssignments = await repos.choreRules.findRecentAssignmentsForRule(rule.id, 100);
-    const assigneeId = calculateAssignee(rule, assignees, recentAssignments);
-
-    await repos.chores.createChore({
-      title: rule.title,
-      dueDate: today,
-      assigneeId,
-      choreRuleId: rule.id,
-    });
-    createdCount++;
+    const { created } = await createChoreForRuleIfDue(repos, rule, today);
+    if (created) createdCount++;
   }
 
   // Step 3: Send daily summaries to opted-in users.

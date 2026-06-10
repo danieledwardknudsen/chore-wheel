@@ -10,6 +10,7 @@ const recurringScheduleConfigSchema = z.object({
   frequency: z.enum(['daily', 'weekly', 'biweekly', 'monthly']),
   dayOfWeek: z.number().int().min(0).max(6).optional(),
   dayOfMonth: z.number().int().min(1).max(31).optional(),
+  startDate: z.string().date().optional(),
 });
 
 export const choreRuleScheduleConfigSchema = z.discriminatedUnion('type', [

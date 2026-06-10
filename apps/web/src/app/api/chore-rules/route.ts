@@ -1,6 +1,7 @@
-import { PostgresChoreRuleRepository } from '@chore-wheel/database';
+import { PostgresChoreRepository, PostgresChoreRuleRepository } from '@chore-wheel/database';
 import { choreRuleScheduleConfigSchema } from '@chore-wheel/database';
 import { assigneeRuleTypeSchema } from '@chore-wheel/database';
+import { createChoreForRuleIfDue } from '@chore-wheel/domain';
 import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
@@ -59,6 +60,17 @@ export const POST = async (request: Request): Promise<Response> => {
 
   if (assignees && assignees.length > 0) {
     await repo.setAssignees(rule.id, assignees);
+  }
+
+  // A one-off rule scheduled for today produces its chore immediately on save
+  // rather than waiting for the nightly batch job. Recurring rules are left to
+  // the job, which materializes each occurrence on its day.
+  if (rule.scheduleType === 'one_off') {
+    await createChoreForRuleIfDue(
+      { chores: new PostgresChoreRepository(db), choreRules: repo },
+      rule,
+      new Date(),
+    );
   }
 
   return Response.json(

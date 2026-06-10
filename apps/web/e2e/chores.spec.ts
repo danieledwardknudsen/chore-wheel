@@ -34,6 +34,29 @@ test.describe('chores', () => {
     await expect(page.getByText('Wash dishes')).toBeVisible();
   });
 
+  test('one-off rule for today creates its chore immediately on save (no job run)', async ({
+    authedPage: page,
+  }) => {
+    const me = (await (await page.request.get('/api/users/me')).json()) as { id: string };
+    const today = new Date().toISOString().slice(0, 10);
+
+    const ruleRes = await page.request.post('/api/chore-rules', {
+      data: {
+        title: 'Pay rent',
+        assigneeRuleType: 'static',
+        staticAssigneeId: me.id,
+        scheduleType: 'one_off',
+        scheduleConfig: { type: 'one_off', date: today },
+        assignees: [{ userId: me.id, weight: 1, position: 0 }],
+      },
+    });
+    expect(ruleRes.ok()).toBeTruthy();
+
+    // No /api/jobs/run call — the chore must already exist from the save.
+    await page.goto('/chores');
+    await expect(page.getByText('Pay rent')).toBeVisible();
+  });
+
   test('marks a chore as complete', async ({ authedPage: page }) => {
     await seedAssignedChore(page, 'Vacuum floors');
 

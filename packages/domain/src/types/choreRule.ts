@@ -8,6 +8,7 @@ export type RecurringSchedule = {
   frequency: 'daily' | 'weekly' | 'biweekly' | 'monthly';
   dayOfWeek?: number; // 0–6, used by weekly/biweekly
   dayOfMonth?: number; // 1–31, used by monthly
+  startDate?: string; // ISO date YYYY-MM-DD; chore does not fire before this date, and anchors biweekly parity
 };
 
 export type ChoreSchedule = OneOffSchedule | RecurringSchedule;
