@@ -6,6 +6,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@chore-wheel/web", "dev"],
       "port": 3000
+    },
+    {
+      "name": "storybook",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@chore-wheel/web", "storybook", "--ci"],
+      "port": 6006
     }
   ]
 }
