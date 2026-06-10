@@ -20,13 +20,11 @@ const dailyRule = (id: string, title: string): ChoreRule => ({
   schedule: { type: 'recurring', frequency: 'daily' },
 });
 
-const user = (id: string, optInTexts = true): User => ({
+const user = (id: string, optInEmails = true): User => ({
   id,
   name: `User ${id}`,
   email: `${id}@example.com`,
-  phone: '+12065550001',
-  optInTexts,
-  optInEmails: false,
+  optInEmails,
 });
 
 const incompleteChore = (id: string, dueDate: Date, assigneeId: string | null = null): Chore => ({
@@ -138,7 +136,7 @@ describe('runAssignmentJob', () => {
     expect(result.expiredCount).toBe(0);
   });
 
-  it('sends notifications to users with text opt-in when sendNotifications=true', async () => {
+  it('sends notifications to users with email opt-in when sendNotifications=true', async () => {
     const choreRules = new InMemoryChoreRuleRepository([dailyRule('rule-1', 'Dishes')]);
     const chores = new InMemoryChoreRepository([]);
     const users = new InMemoryUserRepository([user('user-a', true), user('user-b', false)]);
@@ -152,7 +150,7 @@ describe('runAssignmentJob', () => {
       TODAY,
     );
 
-    // Only user-a has opt-in; user-b does not
+    // Only user-a has email opt-in; user-b does not
     expect(result.notificationsSent).toBe(1);
     expect(sendDailySummary).toHaveBeenCalledTimes(1);
     expect(sendDailySummary.mock.calls[0]?.[0].id).toBe('user-a');

@@ -56,7 +56,6 @@ describe('POST /api/auth/login/start', () => {
     await db.insert(schema.users).values({
       name: 'Login User',
       email: 'login@example.com',
-      phone: '+12065550030',
     });
 
     const { POST } = await import('@/app/api/auth/login/start/route');

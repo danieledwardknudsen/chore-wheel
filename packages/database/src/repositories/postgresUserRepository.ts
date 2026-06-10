@@ -1,4 +1,4 @@
-﻿import type { UserRepository } from '@chore-wheel/domain';
+import type { UserRepository } from '@chore-wheel/domain';
 import type { User } from '@chore-wheel/domain';
 import { asc, eq } from 'drizzle-orm';
 import type { DatabaseClient } from '../client';
@@ -8,8 +8,6 @@ const mapUser = (row: typeof users.$inferSelect): User => ({
   id: row.id,
   name: row.name,
   email: row.email,
-  phone: row.phone,
-  optInTexts: row.optInTexts,
   optInEmails: row.optInEmails,
 });
 
@@ -26,11 +24,6 @@ export class PostgresUserRepository implements UserRepository {
     return rows[0] ? mapUser(rows[0]) : null;
   }
 
-  async findUsersWithTextOptIn(): Promise<User[]> {
-    const rows = await this.db.select().from(users).where(eq(users.optInTexts, true));
-    return rows.map(mapUser);
-  }
-
   async findUsersWithEmailOptIn(): Promise<User[]> {
     const rows = await this.db.select().from(users).where(eq(users.optInEmails, true));
     return rows.map(mapUser);
@@ -40,7 +33,6 @@ export class PostgresUserRepository implements UserRepository {
     id: string,
     input: {
       name?: string | undefined;
-      optInTexts?: boolean | undefined;
       optInEmails?: boolean | undefined;
     },
   ): Promise<User | null> {

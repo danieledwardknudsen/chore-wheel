@@ -6,7 +6,6 @@ import { getSession } from '@/lib/session';
 
 const patchSchema = z.object({
   name: z.string().min(1).max(255).optional(),
-  optInTexts: z.boolean().optional(),
   optInEmails: z.boolean().optional(),
 });
 

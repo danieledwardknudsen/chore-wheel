@@ -1,6 +1,5 @@
 ﻿export * from './users';
 export * from './passkeys';
-export * from './phoneVerifications';
 export * from './choreRules';
 export * from './choreRuleAssignees';
 export * from './chores';

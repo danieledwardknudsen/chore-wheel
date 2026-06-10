@@ -5,7 +5,6 @@ import {
 } from '@chore-wheel/database';
 import { ConsoleNotificationSink, runAssignmentJob } from '@chore-wheel/domain';
 import { db } from '@/lib/db';
-import { createTwilioNotificationSink } from '@/lib/twilioNotificationSink';
 
 export const GET = async (request: Request): Promise<Response> => {
   const authHeader = request.headers.get('authorization');
@@ -21,13 +20,9 @@ export const GET = async (request: Request): Promise<Response> => {
     users: new PostgresUserRepository(db),
   };
 
-  const sink = process.env['TWILIO_ACCOUNT_SID']
-    ? createTwilioNotificationSink()
-    : new ConsoleNotificationSink();
-
   const result = await runAssignmentJob(
     repos,
-    sink,
+    new ConsoleNotificationSink(),
     { sendNotifications: true, websiteUrl: process.env['WEBAUTHN_ORIGIN'] ?? '' },
     new Date(),
   );

@@ -16,10 +16,6 @@ export class InMemoryUserRepository implements UserRepository {
     return Promise.resolve(this.users.find((u) => u.id === id) ?? null);
   }
 
-  findUsersWithTextOptIn(): Promise<User[]> {
-    return Promise.resolve(this.users.filter((u) => u.optInTexts));
-  }
-
   findUsersWithEmailOptIn(): Promise<User[]> {
     return Promise.resolve(this.users.filter((u) => u.optInEmails));
   }

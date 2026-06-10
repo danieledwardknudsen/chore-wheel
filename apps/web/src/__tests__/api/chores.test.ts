@@ -60,7 +60,6 @@ const insertUser = async (overrides: Partial<typeof schema.users.$inferInsert> =
     .values({
       name: 'Test',
       email: `t${Math.random()}@x.com`,
-      phone: `+1206557${Math.floor(1000 + Math.random() * 8999)}`,
       ...overrides,
     })
     .returning();
@@ -94,7 +93,6 @@ describe('GET /api/chores', () => {
     const user = await insertUser();
     const other = await insertUser({
       email: `o${Math.random()}@x.com`,
-      phone: `+1206558${Math.floor(1000 + Math.random() * 8999)}`,
     });
     await setSession(user.id);
     await insertChore(user.id);
@@ -225,7 +223,6 @@ describe('PATCH /api/chores/[id]/reassign', () => {
     const user = await insertUser();
     const other = await insertUser({
       email: `ot${Math.random()}@x.com`,
-      phone: `+1206559${Math.floor(1000 + Math.random() * 8999)}`,
     });
     await setSession(user.id);
     const chore = await insertChore(user.id);

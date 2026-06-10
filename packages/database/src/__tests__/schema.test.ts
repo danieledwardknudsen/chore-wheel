@@ -1,4 +1,4 @@
-﻿import { Client, Pool, PoolClient } from '@neondatabase/serverless';
+import { Client, Pool, PoolClient } from '@neondatabase/serverless';
 import { eq } from 'drizzle-orm';
 import { drizzle, NeonDatabase } from 'drizzle-orm/neon-serverless';
 import { neon } from '@neondatabase/serverless';
@@ -46,14 +46,12 @@ describe('users table', () => {
       .values({
         name: 'Alice',
         email: 'alice@example.com',
-        phone: '+12065550001',
       })
       .returning();
 
     expect(inserted).toBeDefined();
     expect(inserted!.name).toBe('Alice');
     expect(inserted!.email).toBe('alice@example.com');
-    expect(inserted!.optInTexts).toBe(true);
     expect(inserted!.optInEmails).toBe(false);
     expect(inserted!.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 
@@ -66,14 +64,12 @@ describe('users table', () => {
     await db.insert(schema.users).values({
       name: 'Alice',
       email: 'unique@example.com',
-      phone: '+12065550002',
     });
 
     await expect(
       db.insert(schema.users).values({
         name: 'Bob',
         email: 'unique@example.com',
-        phone: '+12065550003',
       }),
     ).rejects.toThrow();
   });
@@ -83,7 +79,7 @@ describe('passkeys table', () => {
   it('inserts a passkey linked to a user and cascades on user delete', async () => {
     const [user] = await db
       .insert(schema.users)
-      .values({ name: 'Bob', email: 'bob@example.com', phone: '+12065550004' })
+      .values({ name: 'Bob', email: 'bob@example.com' })
       .returning();
 
     await db.insert(schema.passkeys).values({
@@ -106,7 +102,7 @@ describe('chore_rules and chores tables', () => {
   it('inserts a chore rule and a chore linked to it', async () => {
     const [user] = await db
       .insert(schema.users)
-      .values({ name: 'Carol', email: 'carol@example.com', phone: '+12065550005' })
+      .values({ name: 'Carol', email: 'carol@example.com' })
       .returning();
 
     const [rule] = await db
@@ -145,24 +141,5 @@ describe('chore_rules and chores tables', () => {
     });
     expect(rulesWithAssignees!.assignees).toHaveLength(1);
     expect(rulesWithAssignees!.chores).toHaveLength(1);
-  });
-});
-
-describe('phone_verifications table', () => {
-  it('inserts and reads a phone verification record', async () => {
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
-    const [record] = await db
-      .insert(schema.phoneVerifications)
-      .values({
-        phone: '+12065550006',
-        code: '123456',
-        expiresAt,
-      })
-      .returning();
-
-    expect(record!.verifiedAt).toBeNull();
-    expect(record!.code).toBe('123456');
-    expect(record!.phone).toBe('+12065550006');
   });
 });

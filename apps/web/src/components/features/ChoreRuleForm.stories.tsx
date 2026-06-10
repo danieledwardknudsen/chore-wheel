@@ -7,16 +7,12 @@ const users: UserJson[] = [
     id: 'user-1',
     name: 'Alice',
     email: 'alice@example.com',
-    phone: '+12065550001',
-    optInTexts: true,
     optInEmails: true,
   },
   {
     id: 'user-2',
     name: 'Bob',
     email: 'bob@example.com',
-    phone: '+12065550002',
-    optInTexts: false,
     optInEmails: false,
   },
 ];

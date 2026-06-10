@@ -7,7 +7,6 @@ import { ConsoleNotificationSink, runAssignmentJob } from '@chore-wheel/domain';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { createTwilioNotificationSink } from '@/lib/twilioNotificationSink';
 
 export const POST = async (request: Request): Promise<Response> => {
   const session = await getSession(await cookies());
@@ -24,14 +23,9 @@ export const POST = async (request: Request): Promise<Response> => {
     users: new PostgresUserRepository(db),
   };
 
-  const sink =
-    !disableMessages && process.env['TWILIO_ACCOUNT_SID']
-      ? createTwilioNotificationSink()
-      : new ConsoleNotificationSink();
-
   const result = await runAssignmentJob(
     repos,
-    sink,
+    new ConsoleNotificationSink(),
     { sendNotifications: !disableMessages, websiteUrl: process.env['WEBAUTHN_ORIGIN'] ?? '' },
     new Date(),
   );

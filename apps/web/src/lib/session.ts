@@ -4,7 +4,6 @@ import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension
 export type SessionData = {
   userId?: string;
   passkeyChallenge?: string;
-  verifiedPhone?: string;
 };
 
 export const sessionOptions = {

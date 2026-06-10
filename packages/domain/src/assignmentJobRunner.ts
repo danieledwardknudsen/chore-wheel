@@ -67,7 +67,7 @@ export const runAssignmentJob = async (
     );
     const unassignedChores = incompleteChores.filter((c) => c.assigneeId === null);
 
-    const usersToNotify = await repos.users.findUsersWithTextOptIn();
+    const usersToNotify = await repos.users.findUsersWithEmailOptIn();
     for (const user of usersToNotify) {
       const assignedChores = incompleteChores.filter((c) => c.assigneeId === user.id);
       await sink.sendDailySummary(user, assignedChores, unassignedChores, config.websiteUrl);

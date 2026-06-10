@@ -60,7 +60,6 @@ const insertUser = async (overrides: Partial<typeof schema.users.$inferInsert> =
     .values({
       name: 'Test User',
       email: `test-${Math.random()}@example.com`,
-      phone: `+1206560${Math.floor(1000 + Math.random() * 8999)}`,
       ...overrides,
     })
     .returning();
@@ -96,14 +95,14 @@ describe('PATCH /api/users/me', () => {
     const req = new Request('http://localhost/api/users/me', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: 'New Name', optInTexts: false }),
+      body: JSON.stringify({ name: 'New Name', optInEmails: true }),
     });
 
     const res = await PATCH(req);
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { name: string; optInTexts: boolean };
+    const body = (await res.json()) as { name: string; optInEmails: boolean };
     expect(body.name).toBe('New Name');
-    expect(body.optInTexts).toBe(false);
+    expect(body.optInEmails).toBe(true);
   });
 
   it('returns 422 for invalid input', async () => {
@@ -127,17 +126,14 @@ describe('GET /api/users', () => {
     await insertUser({
       name: 'Zebra',
       email: `z${Math.random()}@example.com`,
-      phone: `+1206561${Math.floor(1000 + Math.random() * 8999)}`,
     });
     await insertUser({
       name: 'Apple',
       email: `a${Math.random()}@example.com`,
-      phone: `+1206562${Math.floor(1000 + Math.random() * 8999)}`,
     });
     const user = await insertUser({
       name: 'Middle',
       email: `m${Math.random()}@example.com`,
-      phone: `+1206563${Math.floor(1000 + Math.random() * 8999)}`,
     });
     await setSession(user.id);
 

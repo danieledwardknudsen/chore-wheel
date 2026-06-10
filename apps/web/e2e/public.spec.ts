@@ -19,11 +19,10 @@ test.describe('public pages', () => {
     await expect(page).toHaveURL(/\/register/);
   });
 
-  test('register page renders step 1 (name + email + phone)', async ({ page }) => {
+  test('register page renders step 1 (name + email)', async ({ page }) => {
     await page.goto('/register');
     await expect(page.getByLabel(/name/i)).toBeVisible();
     await expect(page.getByLabel(/email/i)).toBeVisible();
-    await expect(page.getByLabel(/phone/i)).toBeVisible();
   });
 
   test('chores page redirects unauthenticated users to /login', async ({ page }) => {

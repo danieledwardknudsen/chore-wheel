@@ -62,7 +62,6 @@ const insertUser = async () => {
     .values({
       name: 'Test',
       email: `t${Math.random()}@x.com`,
-      phone: `+1206555${Math.floor(1000 + Math.random() * 8999)}`,
     })
     .returning();
   return user!;

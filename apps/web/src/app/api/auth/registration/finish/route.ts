@@ -51,7 +51,6 @@ export const POST = async (request: Request): Promise<Response> => {
   });
 
   delete session.passkeyChallenge;
-  delete session.verifiedPhone;
   await session.save();
 
   return Response.json({ success: true });

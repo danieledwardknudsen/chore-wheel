@@ -14,7 +14,6 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
   } = useTheme();
 
   const [name, setName] = useState(user.name);
-  const [optInTexts, setOptInTexts] = useState(user.optInTexts);
   const [optInEmails, setOptInEmails] = useState(user.optInEmails);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -28,7 +27,7 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
       const res = await fetch('/api/users/me', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, optInTexts, optInEmails }),
+        body: JSON.stringify({ name, optInEmails }),
       });
       if (!res.ok) {
         setError('Failed to save profile. Please try again.');
@@ -65,14 +64,6 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
           <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
             Email: {user.email}
           </p>
-          <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-            Phone: {user.phone}
-          </p>
-          <Toggle
-            checked={optInTexts}
-            onChange={() => setOptInTexts((v) => !v)}
-            label="SMS reminders"
-          />
           <Toggle
             checked={optInEmails}
             onChange={() => setOptInEmails((v) => !v)}

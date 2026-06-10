@@ -33,8 +33,6 @@ export type UserJson = {
   id: string;
   name: string;
   email: string;
-  phone: string;
-  optInTexts: boolean;
   optInEmails: boolean;
 };
 
