@@ -1,15 +1,16 @@
+import { type SessionData, sessionOptions } from '@/lib/session';
 import { getIronSession } from 'iron-session';
 import { type NextRequest, NextResponse } from 'next/server';
-import { type SessionData, sessionOptions } from '@/lib/session';
 
 const PUBLIC_PATHS = new Set(['/', '/login', '/register']);
 const AUTH_ONLY_PATHS = new Set(['/login', '/register']);
 const AUTH_API_PREFIX = '/api/auth';
+const CRON_PATH = '/api/jobs/assign-chores';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith(AUTH_API_PREFIX)) {
+  if (pathname.startsWith(AUTH_API_PREFIX) || pathname === CRON_PATH) {
     return NextResponse.next();
   }
 
