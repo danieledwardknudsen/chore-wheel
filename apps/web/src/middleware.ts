@@ -3,17 +3,27 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type SessionData, sessionOptions } from '@/lib/session';
 
 const PUBLIC_PATHS = new Set(['/', '/login', '/register']);
+const AUTH_ONLY_PATHS = new Set(['/login', '/register']);
 const AUTH_API_PREFIX = '/api/auth';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (PUBLIC_PATHS.has(pathname) || pathname.startsWith(AUTH_API_PREFIX)) {
+  if (pathname.startsWith(AUTH_API_PREFIX)) {
     return NextResponse.next();
   }
 
   const response = NextResponse.next();
   const session = await getIronSession<SessionData>(request, response, sessionOptions);
+
+  // Signed-in users cannot reach the login/register pages.
+  if (session.userId && AUTH_ONLY_PATHS.has(pathname)) {
+    return NextResponse.redirect(new URL('/chores', request.url));
+  }
+
+  if (PUBLIC_PATHS.has(pathname)) {
+    return response;
+  }
 
   if (!session.userId) {
     if (pathname.startsWith('/api/')) {

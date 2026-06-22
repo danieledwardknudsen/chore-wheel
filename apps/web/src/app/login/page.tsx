@@ -53,6 +53,7 @@ export default function LoginPage() {
       }
 
       router.push('/');
+      router.refresh(); // re-render the server layout so the NavBar reflects the new session
     } catch {
       setError('Network error');
     } finally {

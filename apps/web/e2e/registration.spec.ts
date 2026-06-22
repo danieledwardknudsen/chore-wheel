@@ -18,11 +18,19 @@ test.describe('registration', () => {
     await page.getByRole('button', { name: 'Create Passkey' }).click();
 
     await expect(page).toHaveURL(/\/chores/, { timeout: 10_000 });
+
+    // The navbar must reflect the new session immediately after the client-side
+    // redirect (no reload) — email shown, login/register gone.
+    await expect(page.getByText('alice@example.com')).toBeVisible();
+    await expect(page.getByRole('link', { name: /login/i })).toHaveCount(0);
   });
 
   test('shows error for duplicate email', async ({ page, context, cleanDb: _ }) => {
     await installVirtualAuthenticator(context, page);
     await registerUser(page, { name: 'Alice', email: 'duplicate@example.com' });
+
+    // Sign out first — a signed-in session is redirected away from /register.
+    await context.clearCookies();
 
     // Second attempt with the same email is rejected at registration/start
     // (409) before any passkey ceremony, so no authenticator is needed here.
