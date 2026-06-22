@@ -12,6 +12,21 @@ test.describe('authenticated navbar + auth-page guards', () => {
     await expect(page.getByRole('link', { name: /register/i })).toHaveCount(0);
   });
 
+  test('highlights the active nav link', async ({ authedPage: page }) => {
+    await page.goto('/chores');
+    await expect(page.getByRole('link', { name: 'chores' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    await expect(page.getByRole('link', { name: 'rules' })).not.toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+
+    await page.goto('/rules');
+    await expect(page.getByRole('link', { name: 'rules' })).toHaveAttribute('aria-current', 'page');
+  });
+
   test('redirects signed-in users away from /login and /register', async ({ authedPage: page }) => {
     await page.goto('/login');
     await expect(page).toHaveURL(/\/chores/);

@@ -1,7 +1,26 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { SignOutButton } from './SignOutButton';
 
-const linkStyle = { color: 'var(--color-text-muted)', textDecoration: 'none' };
+const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
+  const pathname = usePathname();
+  const isActive = pathname === href || pathname.startsWith(`${href}/`);
+  return (
+    <Link
+      href={href}
+      aria-current={isActive ? 'page' : undefined}
+      style={{
+        color: isActive ? 'var(--color-accent)' : 'var(--color-text-muted)',
+        textDecoration: isActive ? 'underline' : 'none',
+        fontWeight: isActive ? 'bold' : 'normal',
+      }}
+    >
+      {children}
+    </Link>
+  );
+};
 
 export const NavBar = ({
   isAuthenticated,
@@ -23,26 +42,16 @@ export const NavBar = ({
     <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
       {isAuthenticated ? (
         <>
-          <Link href="/chores" style={linkStyle}>
-            chores
-          </Link>
-          <Link href="/rules" style={linkStyle}>
-            rules
-          </Link>
-          <Link href="/profile" style={linkStyle}>
-            profile
-          </Link>
-          {userEmail && <span style={{ color: 'var(--color-text)' }}>{userEmail}</span>}
+          <NavLink href="/chores">chores</NavLink>
+          <NavLink href="/rules">rules</NavLink>
+          <NavLink href="/profile">profile</NavLink>
+          {userEmail && <span style={{ color: 'var(--color-text-muted)' }}>{userEmail}</span>}
           <SignOutButton />
         </>
       ) : (
         <>
-          <Link href="/login" style={linkStyle}>
-            [ login ]
-          </Link>
-          <Link href="/register" style={linkStyle}>
-            [ register ]
-          </Link>
+          <NavLink href="/login">[ login ]</NavLink>
+          <NavLink href="/register">[ register ]</NavLink>
         </>
       )}
     </div>

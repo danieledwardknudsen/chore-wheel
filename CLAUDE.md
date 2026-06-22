@@ -146,7 +146,7 @@ Token values:
 --color-surface:     #0a0a0a
 --color-border:      #005514
 --color-text:        #00ff41
---color-text-muted:  #005514
+--color-text-muted:  #2ea043
 --color-accent:      #00cc33
 --color-danger:      #ff3333
 --font-family-base:  'Courier New', Courier, monospace

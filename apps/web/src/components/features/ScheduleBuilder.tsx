@@ -5,6 +5,16 @@ import type { ChoreSchedule, RecurringSchedule } from '@chore-wheel/domain';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+const ASCII_RADIO_STYLE: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  padding: 0,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+  fontSize: 'inherit',
+  color: 'var(--color-text)',
+};
+
 const SELECT_STYLE: React.CSSProperties = {
   background: 'var(--color-bg)',
   border: '1px solid var(--color-border)',
@@ -29,24 +39,20 @@ export const ScheduleBuilder = ({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex gap-6 text-sm" style={{ color: 'var(--color-text)' }}>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="scheduleType"
-            checked={value.type === 'one_off'}
-            onChange={() => onChange({ type: 'one_off', date: '' })}
-          />
-          One-off
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="scheduleType"
-            checked={value.type === 'recurring'}
-            onChange={() => onChange({ type: 'recurring', frequency: 'daily' })}
-          />
-          Recurring
-        </label>
+        <button
+          type="button"
+          onClick={() => onChange({ type: 'one_off', date: '' })}
+          style={ASCII_RADIO_STYLE}
+        >
+          {value.type === 'one_off' ? '[x]' : '[ ]'} One-off
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange({ type: 'recurring', frequency: 'daily' })}
+          style={ASCII_RADIO_STYLE}
+        >
+          {value.type === 'recurring' ? '[x]' : '[ ]'} Recurring
+        </button>
       </div>
 
       {value.type === 'one_off' && (

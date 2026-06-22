@@ -14,7 +14,7 @@ test.describe('rules', () => {
 
     await page.getByLabel('Title').fill('Take out trash');
     // Schedule defaults to one-off; switch to recurring (frequency defaults to daily).
-    await page.getByRole('radio', { name: /recurring/i }).check();
+    await page.getByRole('button', { name: /recurring/i }).click();
 
     await page.getByRole('button', { name: 'Save' }).click();
     await page.waitForURL('**/rules', { timeout: 5_000 });

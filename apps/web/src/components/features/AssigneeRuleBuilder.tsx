@@ -13,6 +13,16 @@ const SELECT_STYLE: React.CSSProperties = {
   fontSize: '0.875rem',
 };
 
+const ASCII_RADIO_STYLE: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  padding: 0,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+  fontSize: 'inherit',
+  color: 'var(--color-text)',
+};
+
 type AssigneeRuleBuilderProps = {
   ruleType: AssigneeRuleType;
   staticAssigneeId: string | null;
@@ -43,15 +53,14 @@ export const AssigneeRuleBuilder = ({
     <div className="flex flex-col gap-3">
       <div className="flex gap-4 text-sm flex-wrap" style={{ color: 'var(--color-text)' }}>
         {(['free_for_all', 'round_robin', 'static'] as AssigneeRuleType[]).map((type) => (
-          <label key={type} className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="assigneeRuleType"
-              checked={ruleType === type}
-              onChange={() => onChange({ ruleType: type, staticAssigneeId: null, userIds: [] })}
-            />
-            {type.replace(/_/g, ' ')}
-          </label>
+          <button
+            key={type}
+            type="button"
+            onClick={() => onChange({ ruleType: type, staticAssigneeId: null, userIds: [] })}
+            style={ASCII_RADIO_STYLE}
+          >
+            {ruleType === type ? '[x]' : '[ ]'} {type.replace(/_/g, ' ')}
+          </button>
         ))}
       </div>
 

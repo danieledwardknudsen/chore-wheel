@@ -24,7 +24,7 @@ const Box = ({ title, children, className }: BoxProps) => (
     {title && (
       <span
         className="absolute -top-3 left-3 px-1 text-xs"
-        style={{ color: 'var(--color-text-muted)', background: 'var(--color-bg)' }}
+        style={{ color: 'var(--color-accent)', background: 'var(--color-bg)' }}
       >
         ─ {title} ─
       </span>
