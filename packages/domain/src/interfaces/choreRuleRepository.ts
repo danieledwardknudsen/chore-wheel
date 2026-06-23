@@ -5,4 +5,5 @@ export interface ChoreRuleRepository {
   findById(id: string): Promise<ChoreRule | null>;
   findAssigneesForRule(ruleId: string): Promise<ChoreRuleAssignee[]>;
   findRecentAssignmentsForRule(ruleId: string, lookbackCount: number): Promise<ChoreAssignment[]>;
+  deactivateChoreRule(id: string): Promise<void>;
 }

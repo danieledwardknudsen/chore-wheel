@@ -57,6 +57,34 @@ test.describe('chores', () => {
     await expect(page.getByText('Pay rent')).toBeVisible();
   });
 
+  test('batch job deactivates a one-off rule whose date has passed', async ({
+    authedPage: page,
+  }) => {
+    const me = (await (await page.request.get('/api/users/me')).json()) as { id: string };
+
+    const ruleRes = await page.request.post('/api/chore-rules', {
+      data: {
+        title: 'Missed errand',
+        assigneeRuleType: 'static',
+        staticAssigneeId: me.id,
+        scheduleType: 'one_off',
+        scheduleConfig: { type: 'one_off', date: '2020-01-01' },
+        assignees: [{ userId: me.id, weight: 1, position: 0 }],
+      },
+    });
+    expect(ruleRes.ok()).toBeTruthy();
+    const rule = (await ruleRes.json()) as { id: string };
+
+    const jobRes = await page.request.post('/api/jobs/run?disableMessages=true');
+    expect(jobRes.ok()).toBeTruthy();
+    const job = (await jobRes.json()) as { deactivatedCount: number };
+    expect(job.deactivatedCount).toBeGreaterThanOrEqual(1);
+
+    const rulesRes = await page.request.get('/api/chore-rules');
+    const activeRules = (await rulesRes.json()) as Array<{ id: string }>;
+    expect(activeRules.find((r) => r.id === rule.id)).toBeUndefined();
+  });
+
   test('marks a chore as complete', async ({ authedPage: page }) => {
     await seedAssignedChore(page, 'Vacuum floors');
 

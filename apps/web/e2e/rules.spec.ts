@@ -9,6 +9,18 @@ const dailyRule = (title: string) => ({
 });
 
 test.describe('rules', () => {
+  test('one-off schedule defaults to today', async ({ authedPage: page }) => {
+    await page.goto('/rules/new');
+
+    // Local date, not toISOString() (UTC) — the form defaults to the browser's
+    // local "today", which can be a day ahead/behind UTC depending on timezone.
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
+      now.getDate(),
+    ).padStart(2, '0')}`;
+    await expect(page.getByLabel('Date')).toHaveValue(today);
+  });
+
   test('creates a new daily rule and shows it in the list', async ({ authedPage: page }) => {
     await page.goto('/rules/new');
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useTheme } from '@/hooks/useTheme';
+import { todayDateString } from '@/lib/today';
 import type { ChoreSchedule, RecurringSchedule } from '@chore-wheel/domain';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -41,7 +42,7 @@ export const ScheduleBuilder = ({
       <div className="flex gap-6 text-sm" style={{ color: 'var(--color-text)' }}>
         <button
           type="button"
-          onClick={() => onChange({ type: 'one_off', date: '' })}
+          onClick={() => onChange({ type: 'one_off', date: todayDateString() })}
           style={ASCII_RADIO_STYLE}
         >
           {value.type === 'one_off' ? '[x]' : '[ ]'} One-off

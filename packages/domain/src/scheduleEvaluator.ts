@@ -58,3 +58,8 @@ export const shouldCreateChoreToday = (rule: ChoreRule, today: Date): boolean =>
 
   return recurringFires(schedule, today);
 };
+
+// One-off rules fire exactly once; once their date is strictly in the past there is
+// nothing left for the job to do with them, and leaving them "active" is misleading.
+export const hasOneOffSchedulePassed = (rule: ChoreRule, today: Date): boolean =>
+  rule.schedule.type === 'one_off' && rule.schedule.date < toUTCDateString(today);

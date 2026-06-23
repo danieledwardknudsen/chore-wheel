@@ -32,4 +32,12 @@ export class InMemoryChoreRuleRepository implements ChoreRuleRepository {
     const matching = this.assignments.filter((a) => a.ruleId === ruleId);
     return Promise.resolve(matching.slice(-lookbackCount));
   }
+
+  deactivateChoreRule(id: string): Promise<void> {
+    const rule = this.rules.find((r) => r.id === id);
+    if (rule) {
+      rule.status = 'inactive';
+    }
+    return Promise.resolve();
+  }
 }

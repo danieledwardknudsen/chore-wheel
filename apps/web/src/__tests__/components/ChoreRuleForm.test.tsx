@@ -23,6 +23,17 @@ const users: UserJson[] = [
 ];
 
 describe('ChoreRuleForm', () => {
+  it('defaults a new one-off rule to today', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-06-15T12:00:00Z'));
+    try {
+      wrap(<ChoreRuleForm users={users} onSubmit={() => {}} loading={false} />);
+      expect(screen.getByLabelText(/date/i)).toHaveValue('2024-06-15');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('renders the title input and save button', () => {
     wrap(<ChoreRuleForm users={users} onSubmit={() => {}} loading={false} />);
     expect(screen.getByLabelText(/title/i)).toBeInTheDocument();

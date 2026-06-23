@@ -115,6 +115,10 @@ export class PostgresChoreRuleRepository implements ChoreRuleRepository {
     await this.db.update(choreRules).set({ status: 'inactive' }).where(eq(choreRules.id, id));
   }
 
+  async deactivateChoreRule(id: string): Promise<void> {
+    await this.db.update(choreRules).set({ status: 'inactive' }).where(eq(choreRules.id, id));
+  }
+
   async setAssignees(
     ruleId: string,
     assignees: Array<{ userId: string; weight: number; position: number }>,

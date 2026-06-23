@@ -156,6 +156,75 @@ describe('runAssignmentJob', () => {
     expect(sendDailySummary.mock.calls[0]?.[0].id).toBe('user-a');
   });
 
+  it('deactivates a one-off rule whose date has passed', async () => {
+    const pastRule: ChoreRule = {
+      id: 'rule-past',
+      title: 'Missed one-off',
+      status: 'active',
+      assigneeRuleType: 'free_for_all',
+      staticAssigneeId: null,
+      scheduleType: 'one_off',
+      schedule: { type: 'one_off', date: '2024-06-10' }, // before TODAY (2024-06-17)
+    };
+    const choreRules = new InMemoryChoreRuleRepository([pastRule]);
+    const chores = new InMemoryChoreRepository([]);
+    const users = new InMemoryUserRepository([]);
+    const sink = new ConsoleNotificationSink();
+
+    const result = await runAssignmentJob(
+      { chores, choreRules, users },
+      sink,
+      { sendNotifications: false, websiteUrl: 'http://localhost' },
+      TODAY,
+    );
+
+    expect(result.deactivatedCount).toBe(1);
+    expect((await choreRules.findById('rule-past'))?.status).toBe('inactive');
+  });
+
+  it('does not deactivate a one-off rule scheduled for today', async () => {
+    const todayRule: ChoreRule = {
+      id: 'rule-today',
+      title: 'Today one-off',
+      status: 'active',
+      assigneeRuleType: 'free_for_all',
+      staticAssigneeId: null,
+      scheduleType: 'one_off',
+      schedule: { type: 'one_off', date: '2024-06-17' }, // matches TODAY
+    };
+    const choreRules = new InMemoryChoreRuleRepository([todayRule]);
+    const chores = new InMemoryChoreRepository([]);
+    const users = new InMemoryUserRepository([]);
+    const sink = new ConsoleNotificationSink();
+
+    const result = await runAssignmentJob(
+      { chores, choreRules, users },
+      sink,
+      { sendNotifications: false, websiteUrl: 'http://localhost' },
+      TODAY,
+    );
+
+    expect(result.deactivatedCount).toBe(0);
+    expect((await choreRules.findById('rule-today'))?.status).toBe('active');
+  });
+
+  it('does not deactivate a recurring rule', async () => {
+    const choreRules = new InMemoryChoreRuleRepository([dailyRule('rule-1', 'Dishes')]);
+    const chores = new InMemoryChoreRepository([]);
+    const users = new InMemoryUserRepository([]);
+    const sink = new ConsoleNotificationSink();
+
+    const result = await runAssignmentJob(
+      { chores, choreRules, users },
+      sink,
+      { sendNotifications: false, websiteUrl: 'http://localhost' },
+      TODAY,
+    );
+
+    expect(result.deactivatedCount).toBe(0);
+    expect((await choreRules.findById('rule-1'))?.status).toBe('active');
+  });
+
   it('skips notifications when sendNotifications=false', async () => {
     const choreRules = new InMemoryChoreRuleRepository([dailyRule('rule-1', 'Dishes')]);
     const chores = new InMemoryChoreRepository([]);

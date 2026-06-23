@@ -1,5 +1,6 @@
 ﻿import { createChoreForRuleIfDue } from './createChoreForRuleIfDue';
 import { shouldExpireChore } from './expirationEvaluator';
+import { hasOneOffSchedulePassed } from './scheduleEvaluator';
 import type { ChoreRepository } from './interfaces/choreRepository';
 import type { ChoreRuleRepository } from './interfaces/choreRuleRepository';
 import type { NotificationSink } from './interfaces/notificationSink';
@@ -13,6 +14,7 @@ export type AssignmentJobConfig = {
 export type AssignmentJobResult = {
   expiredCount: number;
   createdCount: number;
+  deactivatedCount: number;
   notificationsSent: number;
 };
 
@@ -24,6 +26,7 @@ export const runAssignmentJob = async (
 ): Promise<AssignmentJobResult> => {
   let expiredCount = 0;
   let createdCount = 0;
+  let deactivatedCount = 0;
   let notificationsSent = 0;
 
   // Step 1: Expire overdue incomplete chores.
@@ -44,7 +47,15 @@ export const runAssignmentJob = async (
     if (created) createdCount++;
   }
 
-  // Step 3: Send daily summaries to opted-in users.
+  // Step 3: Deactivate one-off rules whose date has passed.
+  for (const rule of activeRules) {
+    if (hasOneOffSchedulePassed(rule, today)) {
+      await repos.choreRules.deactivateChoreRule(rule.id);
+      deactivatedCount++;
+    }
+  }
+
+  // Step 4: Send daily summaries to opted-in users.
   if (config.sendNotifications) {
     const allChores = await repos.chores.findAllIncompleteAndExpired();
     const incompleteChores = allChores.filter(
@@ -60,5 +71,5 @@ export const runAssignmentJob = async (
     }
   }
 
-  return { expiredCount, createdCount, notificationsSent };
+  return { expiredCount, createdCount, deactivatedCount, notificationsSent };
 };

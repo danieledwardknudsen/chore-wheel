@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { AssigneeRuleType, ChoreSchedule } from '@chore-wheel/domain';
 import { useTheme } from '@/hooks/useTheme';
+import { todayDateString } from '@/lib/today';
 import { ScheduleBuilder } from './ScheduleBuilder';
 import { AssigneeRuleBuilder } from './AssigneeRuleBuilder';
 import type { ChoreRuleJson, RuleFormData, UserJson } from '@/types/api';
@@ -29,7 +30,7 @@ export const ChoreRuleForm = ({
   const [title, setTitle] = useState(initialValues?.title ?? '');
   const [titleError, setTitleError] = useState('');
   const [schedule, setSchedule] = useState<ChoreSchedule>(
-    initialValues?.schedule ?? { type: 'one_off', date: '' },
+    initialValues?.schedule ?? { type: 'one_off', date: todayDateString() },
   );
   const [ruleType, setRuleType] = useState<AssigneeRuleType>(
     initialValues?.assigneeRuleType ?? 'free_for_all',
