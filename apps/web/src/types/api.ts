@@ -43,4 +43,5 @@ export type RuleFormData = {
   scheduleType: 'one_off' | 'recurring';
   scheduleConfig: ChoreSchedule;
   assignees: Array<{ userId: string; weight: number; position: number }>;
+  clientToday: string;
 };

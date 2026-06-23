@@ -20,6 +20,11 @@ const createSchema = z.object({
   scheduleType: z.enum(['one_off', 'recurring']),
   scheduleConfig: choreRuleScheduleConfigSchema,
   assignees: z.array(assigneeSchema).optional(),
+  // The browser's local "today" (YYYY-MM-DD), used only to decide whether a
+  // one-off rule fires immediately on save. Without it the immediate-creation
+  // check falls back to the server's own (UTC) clock, which can disagree with
+  // the user's local calendar day for several hours in timezones behind UTC.
+  clientToday: z.string().date().optional(),
 });
 
 export const GET = async (): Promise<Response> => {
@@ -54,7 +59,7 @@ export const POST = async (request: Request): Promise<Response> => {
     );
   }
 
-  const { assignees, ...ruleInput } = parsed.data;
+  const { assignees, clientToday, ...ruleInput } = parsed.data;
   const repo = new PostgresChoreRuleRepository(db);
   const rule = await repo.createChoreRule(ruleInput);
 
@@ -64,12 +69,15 @@ export const POST = async (request: Request): Promise<Response> => {
 
   // A one-off rule scheduled for today produces its chore immediately on save
   // rather than waiting for the nightly batch job. Recurring rules are left to
-  // the job, which materializes each occurrence on its day.
+  // the job, which materializes each occurrence on its day. Prefer the
+  // client's local date over the server clock so this matches the user's own
+  // calendar day (see clientToday above).
   if (rule.scheduleType === 'one_off') {
+    const today = clientToday ? new Date(`${clientToday}T00:00:00Z`) : new Date();
     await createChoreForRuleIfDue(
       { chores: new PostgresChoreRepository(db), choreRules: repo },
       rule,
-      new Date(),
+      today,
     );
   }
 

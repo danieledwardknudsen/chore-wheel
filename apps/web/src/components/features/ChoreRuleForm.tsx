@@ -63,6 +63,7 @@ export const ChoreRuleForm = ({
       scheduleType: schedule.type,
       scheduleConfig: schedule,
       assignees,
+      clientToday: todayDateString(),
     });
   };
 

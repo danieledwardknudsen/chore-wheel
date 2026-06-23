@@ -152,6 +152,63 @@ describe('POST /api/chore-rules', () => {
     const res = await POST(req);
     expect(res.status).toBe(422);
   });
+
+  it('creates the chore immediately using the client-supplied local date, not the server clock', async () => {
+    const user = await insertUser();
+    await setSession(user.id);
+
+    // Far-future date: guarantees it never equals the server's real "today",
+    // so a chore only appears if the route actually used clientToday.
+    const { POST } = await import('@/app/api/chore-rules/route');
+    const req = new Request('http://localhost/api/chore-rules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: 'Client-local one-off',
+        assigneeRuleType: 'free_for_all',
+        scheduleType: 'one_off',
+        scheduleConfig: { type: 'one_off', date: '2030-01-01' },
+        clientToday: '2030-01-01',
+      }),
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(201);
+    const body = (await res.json()) as { id: string };
+
+    const chores = await db
+      .select()
+      .from(schema.chores)
+      .where(eq(schema.chores.choreRuleId, body.id));
+    expect(chores).toHaveLength(1);
+  });
+
+  it('does not create the chore early when clientToday is omitted and the date is not the server today', async () => {
+    const user = await insertUser();
+    await setSession(user.id);
+
+    const { POST } = await import('@/app/api/chore-rules/route');
+    const req = new Request('http://localhost/api/chore-rules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: 'No client date',
+        assigneeRuleType: 'free_for_all',
+        scheduleType: 'one_off',
+        scheduleConfig: { type: 'one_off', date: '2030-01-01' },
+      }),
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(201);
+    const body = (await res.json()) as { id: string };
+
+    const chores = await db
+      .select()
+      .from(schema.chores)
+      .where(eq(schema.chores.choreRuleId, body.id));
+    expect(chores).toHaveLength(0);
+  });
 });
 
 describe('GET /api/chore-rules/[id]', () => {
