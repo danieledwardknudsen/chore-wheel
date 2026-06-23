@@ -10,6 +10,7 @@ const makeChore = (overrides: Partial<Chore> = {}): Chore => ({
   assigneeId: null,
   choreRuleId: null,
   createdAt: new Date('2024-01-01'),
+  completedAt: null,
   ...overrides,
 });
 

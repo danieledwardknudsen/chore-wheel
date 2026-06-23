@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { PostgresChoreRepository, PostgresUserRepository } from '@chore-wheel/database';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
+import { toChoreJson } from '@/lib/chores';
 import { ChoreDetail } from './ChoreDetail';
 
 type PageProps = { params: Promise<{ id: string }> };
@@ -19,15 +20,5 @@ export default async function ChoreDetailPage({ params }: PageProps) {
 
   if (!chore) notFound();
 
-  return (
-    <ChoreDetail
-      chore={{
-        ...chore,
-        dueDate: chore.dueDate.toISOString().split('T')[0] ?? chore.dueDate.toISOString(),
-        createdAt: chore.createdAt.toISOString(),
-      }}
-      users={users}
-      currentUserId={session.userId}
-    />
-  );
+  return <ChoreDetail chore={toChoreJson(chore)} users={users} currentUserId={session.userId} />;
 }

@@ -33,6 +33,7 @@ export class InMemoryChoreRepository implements ChoreRepository {
       assigneeId: input.assigneeId,
       choreRuleId: input.choreRuleId,
       createdAt: new Date(),
+      completedAt: null,
     };
     this.chores.push(chore);
     return Promise.resolve(chore);
@@ -42,6 +43,11 @@ export class InMemoryChoreRepository implements ChoreRepository {
     const chore = this.chores.find((c) => c.id === id);
     if (chore) {
       chore.status = status;
+      // Only stamp on the first transition to complete — re-completing an
+      // already-complete chore must not bump it to the top of the recently-completed list.
+      if (status === 'complete' && chore.completedAt === null) {
+        chore.completedAt = new Date();
+      }
     }
     return Promise.resolve();
   }
@@ -50,5 +56,14 @@ export class InMemoryChoreRepository implements ChoreRepository {
     return Promise.resolve(
       this.chores.filter((c) => c.status === 'incomplete' || c.status === 'expired'),
     );
+  }
+
+  findRecentlyCompleted(limit: number): Promise<Chore[]> {
+    const completed = this.chores
+      .filter((c) => c.status === 'complete')
+      .sort(
+        (a, b) => (b.completedAt?.getTime() ?? -Infinity) - (a.completedAt?.getTime() ?? -Infinity),
+      );
+    return Promise.resolve(completed.slice(0, limit));
   }
 }

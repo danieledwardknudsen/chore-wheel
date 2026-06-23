@@ -35,6 +35,7 @@ const incompleteChore = (id: string, dueDate: Date, assigneeId: string | null = 
   assigneeId,
   choreRuleId: null,
   createdAt: dueDate,
+  completedAt: null,
 });
 
 describe('runAssignmentJob', () => {

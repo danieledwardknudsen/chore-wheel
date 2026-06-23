@@ -3,8 +3,11 @@ import { redirect } from 'next/navigation';
 import { PostgresChoreRepository, PostgresUserRepository } from '@chore-wheel/database';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import type { ChoreJson, UserJson } from '@/types/api';
+import { toChoreJson } from '@/lib/chores';
+import type { UserJson } from '@/types/api';
 import { ChoreDashboard } from './ChoreDashboard';
+
+const RECENTLY_COMPLETED_LIMIT = 10;
 
 export default async function ChoresPage() {
   const session = await getSession(await cookies());
@@ -13,20 +16,16 @@ export default async function ChoresPage() {
   const choreRepo = new PostgresChoreRepository(db);
   const userRepo = new PostgresUserRepository(db);
 
-  const [chores, users] = await Promise.all([
+  const [chores, recentlyCompleted, users] = await Promise.all([
     choreRepo.findAllIncompleteAndExpired(),
+    choreRepo.findRecentlyCompleted(RECENTLY_COMPLETED_LIMIT),
     userRepo.findAll(),
   ]);
 
-  const choreJsons: ChoreJson[] = chores.map((c) => ({
-    ...c,
-    dueDate: c.dueDate.toISOString().split('T')[0] ?? c.dueDate.toISOString(),
-    createdAt: c.createdAt.toISOString(),
-  }));
-
   return (
     <ChoreDashboard
-      chores={choreJsons}
+      chores={chores.map(toChoreJson)}
+      recentlyCompleted={recentlyCompleted.map(toChoreJson)}
       users={users as UserJson[]}
       currentUserId={session.userId}
     />

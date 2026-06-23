@@ -1,6 +1,6 @@
 ﻿import type { ChoreRepository } from '@chore-wheel/domain';
 import type { Chore, ChoreStatus, CreateChoreInput } from '@chore-wheel/domain';
-import { and, desc, eq, isNull, lt, ne } from 'drizzle-orm';
+import { and, eq, isNull, lt, ne, sql } from 'drizzle-orm';
 import type { DatabaseClient } from '../client';
 import { chores } from '../schema/index';
 
@@ -15,6 +15,7 @@ const mapChore = (row: typeof chores.$inferSelect): Chore => ({
   assigneeId: row.assigneeId,
   choreRuleId: row.choreRuleId,
   createdAt: row.createdAt,
+  completedAt: row.completedAt,
 });
 
 export class PostgresChoreRepository implements ChoreRepository {
@@ -53,12 +54,33 @@ export class PostgresChoreRepository implements ChoreRepository {
   }
 
   async updateStatus(id: string, status: ChoreStatus): Promise<void> {
-    await this.db.update(chores).set({ status, updatedAt: new Date() }).where(eq(chores.id, id));
+    await this.db
+      .update(chores)
+      .set({
+        status,
+        updatedAt: new Date(),
+        // coalesce so re-completing an already-complete chore (e.g. a duplicate
+        // request) doesn't bump its completedAt and reorder the recently-completed list.
+        ...(status === 'complete'
+          ? { completedAt: sql`coalesce(${chores.completedAt}, now())` }
+          : {}),
+      })
+      .where(eq(chores.id, id));
   }
 
   async findAllIncompleteAndExpired(): Promise<Chore[]> {
     const rows = await this.db.select().from(chores).where(ne(chores.status, 'complete'));
     return rows.filter((r) => r.status === 'incomplete' || r.status === 'expired').map(mapChore);
+  }
+
+  async findRecentlyCompleted(limit: number): Promise<Chore[]> {
+    const rows = await this.db
+      .select()
+      .from(chores)
+      .where(eq(chores.status, 'complete'))
+      .orderBy(sql`${chores.completedAt} DESC NULLS LAST`)
+      .limit(limit);
+    return rows.map(mapChore);
   }
 
   async findByAssignee(userId: string): Promise<Chore[]> {

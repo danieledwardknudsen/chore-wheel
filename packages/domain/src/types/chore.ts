@@ -8,6 +8,7 @@ export type Chore = {
   assigneeId: string | null;
   choreRuleId: string | null;
   createdAt: Date;
+  completedAt: Date | null;
 };
 
 export type CreateChoreInput = {

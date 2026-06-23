@@ -11,6 +11,7 @@ export const chores = pgTable('chores', {
   choreRuleId: uuid('chore_rule_id').references(() => choreRules.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  completedAt: timestamp('completed_at'),
 });
 
 export type Chore = typeof chores.$inferSelect;

@@ -8,6 +8,7 @@ export type ChoreJson = {
   assigneeId: string | null;
   choreRuleId: string | null;
   createdAt: string;
+  completedAt: string | null;
 };
 
 export type ChoreRuleAssigneeJson = {

@@ -97,4 +97,35 @@ test.describe('chores', () => {
     // After completion the chore shows the DONE badge.
     await expect(page.getByText(/done/i)).toBeVisible({ timeout: 5_000 });
   });
+
+  test('marks a chore as complete directly from the chores list, without opening the detail page', async ({
+    authedPage: page,
+  }) => {
+    await seedAssignedChore(page, 'Sweep porch');
+
+    // cleanDb leaves this the only chore on the page, so the button is unambiguous.
+    await page.goto('/chores');
+    await page.getByRole('button', { name: 'Complete' }).click();
+
+    // Still on the list page — completion happened inline.
+    await expect(page).toHaveURL(/\/chores$/);
+    await expect(page.getByText(/done/i)).toBeVisible({ timeout: 5_000 });
+  });
+
+  test('a recently completed chore appears in its own section on the chores page', async ({
+    authedPage: page,
+  }) => {
+    await seedAssignedChore(page, 'Take out trash');
+
+    await page.goto('/chores');
+    await page.getByText('Take out trash').click();
+    await expect(page).toHaveURL(/\/chores\/[0-9a-f-]+/);
+    await page.getByRole('button', { name: 'Complete' }).click();
+    await expect(page.getByText(/done/i)).toBeVisible({ timeout: 5_000 });
+
+    // Completed chores drop out of MY CHORES / UNASSIGNED / OTHERS, so the
+    // only place this title can still appear is the recently-completed list.
+    await page.goto('/chores');
+    await expect(page.getByText('Take out trash')).toBeVisible();
+  });
 });

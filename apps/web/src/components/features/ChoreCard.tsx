@@ -7,18 +7,16 @@ import type { ChoreJson } from '@/types/api';
 
 export type ChoreCardProps = {
   chore: ChoreJson;
-  currentUserId: string;
   assigneeName?: string;
   onAction: () => void;
 };
 
-export const ChoreCard = ({ chore, currentUserId, assigneeName, onAction }: ChoreCardProps) => {
+export const ChoreCard = ({ chore, assigneeName, onAction }: ChoreCardProps) => {
   const [loading, setLoading] = useState(false);
   const {
     primitives: { Box, Button, Badge },
   } = useTheme();
 
-  const isMine = chore.assigneeId === currentUserId;
   const isActionable = chore.status === 'incomplete';
 
   const doAction = async (url: string) => {
@@ -44,21 +42,21 @@ export const ChoreCard = ({ chore, currentUserId, assigneeName, onAction }: Chor
         <Badge status={chore.status} />
       </div>
       <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-        due {chore.dueDate}
+        {chore.status === 'complete' && chore.completedAt
+          ? `completed ${chore.completedAt}`
+          : `due ${chore.dueDate}`}
         {assigneeName ? ` · @${assigneeName}` : ' · unassigned'}
       </p>
       {isActionable && (
         <div className="flex gap-2 mt-3">
-          {isMine && (
-            <Button
-              variant="primary"
-              size="sm"
-              loading={loading}
-              onClick={() => void doAction(`/api/chores/${chore.id}/complete`)}
-            >
-              Complete
-            </Button>
-          )}
+          <Button
+            variant="primary"
+            size="sm"
+            loading={loading}
+            onClick={() => void doAction(`/api/chores/${chore.id}/complete`)}
+          >
+            Complete
+          </Button>
           <Button
             variant="ghost"
             size="sm"

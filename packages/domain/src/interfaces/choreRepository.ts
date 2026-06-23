@@ -6,4 +6,5 @@ export interface ChoreRepository {
   createChore(input: CreateChoreInput): Promise<Chore>;
   updateStatus(id: string, status: ChoreStatus): Promise<void>;
   findAllIncompleteAndExpired(): Promise<Chore[]>;
+  findRecentlyCompleted(limit: number): Promise<Chore[]>;
 }

@@ -197,6 +197,24 @@ describe('PATCH /api/chores/[id]/complete', () => {
 
     const rows = await db.select().from(schema.chores).where(eq(schema.chores.id, chore.id));
     expect(rows[0]?.status).toBe('complete');
+    expect(rows[0]?.completedAt).not.toBeNull();
+  });
+
+  it('allows a user who is not the assignee to mark the chore complete', async () => {
+    const assignee = await insertUser();
+    const otherUser = await insertUser({ email: `other${Math.random()}@x.com` });
+    await setSession(otherUser.id);
+    const chore = await insertChore(assignee.id);
+
+    const { PATCH } = await import('@/app/api/chores/[id]/complete/route');
+    const res = await PATCH(
+      new Request(`http://localhost/api/chores/${chore.id}/complete`, { method: 'PATCH' }),
+      { params: Promise.resolve({ id: chore.id }) },
+    );
+    expect(res.status).toBe(200);
+
+    const rows = await db.select().from(schema.chores).where(eq(schema.chores.id, chore.id));
+    expect(rows[0]?.status).toBe('complete');
   });
 });
 

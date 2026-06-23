@@ -15,6 +15,13 @@
       "when": 1749427200000,
       "tag": "0001_drop_phone",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782194295046,
+      "tag": "0002_silky_vivisector",
+      "breakpoints": true
     }
   ]
 }
