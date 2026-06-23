@@ -29,6 +29,9 @@ beforeEach(async () => {
   await client.query('BEGIN');
   // PoolClient is runtime-compatible with Client but drizzle-orm's types only accept Client.
   db = drizzle({ client: client as unknown as Client, schema });
+  // Other suites (e.g. Playwright e2e) share this database and only truncate
+  // before their own tests, leaving rows visible to this transaction's reads.
+  await db.delete(schema.chores);
 });
 
 afterEach(async () => {
