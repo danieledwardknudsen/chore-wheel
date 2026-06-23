@@ -37,7 +37,8 @@ test.describe('responsive design', () => {
     await expect(page.getByRole('link', { name: /profile/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /sign out/i })).toBeVisible();
 
-    // Logo should not be visible on mobile
-    await expect(page.getByText('⚙ CHORE-WHEEL')).not.toBeVisible();
+    // Logo icon stays visible on mobile, but the "CHORE-WHEEL" text is dropped.
+    await expect(page.getByRole('link', { name: '⚙' })).toBeVisible();
+    await expect(page.getByText('CHORE-WHEEL')).not.toBeVisible();
   });
 });

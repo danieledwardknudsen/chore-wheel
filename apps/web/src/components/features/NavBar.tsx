@@ -35,10 +35,10 @@ export const NavBar = ({
   >
     <Link
       href="/"
-      className="hidden sm:block whitespace-nowrap"
+      className="whitespace-nowrap"
       style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 'bold' }}
     >
-      ⚙ CHORE-WHEEL
+      ⚙<span className="hidden sm:inline"> CHORE-WHEEL</span>
     </Link>
     <div
       style={{
