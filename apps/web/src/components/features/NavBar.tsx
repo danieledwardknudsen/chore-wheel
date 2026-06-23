@@ -30,22 +30,36 @@ export const NavBar = ({
   userEmail?: string;
 }) => (
   <nav
-    className="flex items-center justify-between px-4 py-2 text-sm"
+    className="flex items-center justify-between px-2 py-2 text-sm sm:px-4"
     style={{ borderBottom: '1px solid var(--color-border)', fontFamily: 'inherit' }}
   >
     <Link
       href="/"
+      className="hidden sm:block whitespace-nowrap"
       style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 'bold' }}
     >
       ⚙ CHORE-WHEEL
     </Link>
-    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+    <div
+      style={{
+        display: 'flex',
+        gap: '0.75rem',
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'flex-end',
+      }}
+      className="sm:gap-6"
+    >
       {isAuthenticated ? (
         <>
           <NavLink href="/chores">chores</NavLink>
           <NavLink href="/rules">rules</NavLink>
           <NavLink href="/profile">profile</NavLink>
-          {userEmail && <span style={{ color: 'var(--color-text-muted)' }}>{userEmail}</span>}
+          {userEmail && (
+            <span className="hidden sm:inline" style={{ color: 'var(--color-text-muted)' }}>
+              {userEmail}
+            </span>
+          )}
           <SignOutButton />
         </>
       ) : (
