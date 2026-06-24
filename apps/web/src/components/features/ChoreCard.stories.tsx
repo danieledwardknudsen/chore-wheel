@@ -20,33 +20,18 @@ const meta: Meta<typeof ChoreCard> = {
 export default meta;
 type Story = StoryObj<typeof ChoreCard>;
 
-export const Mine: Story = {
-  render: () => (
-    <ChoreCard chore={baseChore} currentUserId="user-1" assigneeName="Alice" onAction={() => {}} />
-  ),
-};
-
-export const Others: Story = {
-  render: () => (
-    <ChoreCard chore={baseChore} currentUserId="user-2" assigneeName="Alice" onAction={() => {}} />
-  ),
+export const Assigned: Story = {
+  render: () => <ChoreCard chore={baseChore} assigneeName="Alice" onAction={() => {}} />,
 };
 
 export const Unassigned: Story = {
-  render: () => (
-    <ChoreCard
-      chore={{ ...baseChore, assigneeId: null }}
-      currentUserId="user-1"
-      onAction={() => {}}
-    />
-  ),
+  render: () => <ChoreCard chore={{ ...baseChore, assigneeId: null }} onAction={() => {}} />,
 };
 
 export const Completed: Story = {
   render: () => (
     <ChoreCard
       chore={{ ...baseChore, status: 'complete' }}
-      currentUserId="user-1"
       assigneeName="Alice"
       onAction={() => {}}
     />
@@ -57,7 +42,6 @@ export const Expired: Story = {
   render: () => (
     <ChoreCard
       chore={{ ...baseChore, status: 'expired' }}
-      currentUserId="user-1"
       assigneeName="Alice"
       onAction={() => {}}
     />

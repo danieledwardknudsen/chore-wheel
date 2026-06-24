@@ -27,7 +27,6 @@ export default async function ChoreDetailPage({ params }: PageProps) {
         createdAt: chore.createdAt.toISOString(),
       }}
       users={users}
-      currentUserId={session.userId}
     />
   );
 }

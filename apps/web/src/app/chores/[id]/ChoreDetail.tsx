@@ -19,10 +19,9 @@ const SELECT_STYLE: React.CSSProperties = {
 type ChoreDetailProps = {
   chore: ChoreJson;
   users: UserJson[];
-  currentUserId: string;
 };
 
-export const ChoreDetail = ({ chore, users, currentUserId }: ChoreDetailProps) => {
+export const ChoreDetail = ({ chore, users }: ChoreDetailProps) => {
   const router = useRouter();
   const {
     primitives: { Box, Button, Badge },
@@ -33,7 +32,6 @@ export const ChoreDetail = ({ chore, users, currentUserId }: ChoreDetailProps) =
 
   const assigneeName = users.find((u) => u.id === chore.assigneeId)?.name;
   const isActionable = chore.status === 'incomplete';
-  const isMine = chore.assigneeId === currentUserId;
 
   const doAction = async (url: string, method = 'PATCH', body?: object) => {
     setLoading(true);
@@ -72,16 +70,14 @@ export const ChoreDetail = ({ chore, users, currentUserId }: ChoreDetailProps) =
 
         {isActionable && (
           <div className="flex flex-col gap-4">
-            {isMine && (
-              <Button
-                variant="primary"
-                size="sm"
-                loading={loading}
-                onClick={() => void doAction(`/api/chores/${chore.id}/complete`)}
-              >
-                Complete
-              </Button>
-            )}
+            <Button
+              variant="primary"
+              size="sm"
+              loading={loading}
+              onClick={() => void doAction(`/api/chores/${chore.id}/complete`)}
+            >
+              Complete
+            </Button>
             <Button
               variant="ghost"
               size="sm"

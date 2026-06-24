@@ -40,7 +40,6 @@ export const ChoreDashboard = ({ chores, users, currentUserId }: ChoreDashboardP
                 <ChoreCard
                   key={c.id}
                   chore={c}
-                  currentUserId={currentUserId}
                   {...(name !== undefined ? { assigneeName: name } : {})}
                   onAction={refresh}
                 />
@@ -58,7 +57,7 @@ export const ChoreDashboard = ({ chores, users, currentUserId }: ChoreDashboardP
         ) : (
           <div className="flex flex-col gap-3">
             {unassigned.map((c) => (
-              <ChoreCard key={c.id} chore={c} currentUserId={currentUserId} onAction={refresh} />
+              <ChoreCard key={c.id} chore={c} onAction={refresh} />
             ))}
           </div>
         )}
@@ -77,7 +76,6 @@ export const ChoreDashboard = ({ chores, users, currentUserId }: ChoreDashboardP
                 <ChoreCard
                   key={c.id}
                   chore={c}
-                  currentUserId={currentUserId}
                   {...(name !== undefined ? { assigneeName: name } : {})}
                   onAction={refresh}
                 />

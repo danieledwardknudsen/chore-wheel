@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect, registerUser } from './fixtures';
 import type { Page } from '@playwright/test';
 
 // Creates a rule assigned to the current user, runs the assignment job, and
@@ -95,6 +95,36 @@ test.describe('chores', () => {
     await page.getByRole('button', { name: 'Complete' }).click();
 
     // After completion the chore shows the DONE badge.
+    await expect(page.getByText(/done/i)).toBeVisible({ timeout: 5_000 });
+  });
+
+  test('a user who is not the assignee can mark a chore as complete', async ({
+    authedPage: page,
+  }) => {
+    const owner = (await (await page.request.get('/api/users/me')).json()) as { id: string };
+    const today = new Date().toISOString().slice(0, 10);
+
+    const ruleRes = await page.request.post('/api/chore-rules', {
+      data: {
+        title: "Someone else's errand",
+        assigneeRuleType: 'static',
+        staticAssigneeId: owner.id,
+        scheduleType: 'one_off',
+        scheduleConfig: { type: 'one_off', date: today },
+        assignees: [{ userId: owner.id, weight: 1, position: 0 }],
+      },
+    });
+    expect(ruleRes.ok()).toBeTruthy();
+
+    // Sign out the assignee and register a second, unrelated user.
+    await page.context().clearCookies();
+    await registerUser(page, { name: 'Bystander', email: 'bystander@test.com' });
+
+    await page.goto('/chores');
+    await page.getByText("Someone else's errand").click();
+    await expect(page).toHaveURL(/\/chores\/[0-9a-f-]+/);
+
+    await page.getByRole('button', { name: 'Complete' }).click();
     await expect(page.getByText(/done/i)).toBeVisible({ timeout: 5_000 });
   });
 });
