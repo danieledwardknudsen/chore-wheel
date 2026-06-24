@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm --filter @chore-wheel/database db:migrate && next build",
+  "buildCommand": "if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm --filter @chore-wheel/database db:migrate; fi && next build",
   "crons": [
     {
       "path": "/api/jobs/assign-chores",
