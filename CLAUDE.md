@@ -33,7 +33,18 @@ Each directory contains a `README.md` that lists every file in that directory an
 
 ## Development Workflow
 
-### 1. Red-Green Development (mandatory for every feature)
+### 1. Workspace Isolation (mandatory for every task)
+
+Multiple agents may be working in this repo at the same time. To avoid stepping on in-progress work, **never make changes directly on `main`**:
+
+1. **Start a worktree** for the task using the `EnterWorktree` tool (name it after the task, e.g. `EnterWorktree({ name: "fix-eslint-dependency" })`). This creates an isolated checkout at `.claude/worktrees/<name>` on a new `worktree-<name>` branch and switches the session into it.
+2. **Do the work** in that worktree — follow the Red-Green Development and Code Review steps below, and commit as you go.
+3. **Merge back to `main`** when the task is done and verified: switch back to the repo root, `git merge --no-ff worktree-<name>`, resolve any conflicts, then `git push`.
+4. **Clean up the worktree** — use `ExitWorktree({ action: "remove" })` (or `git worktree remove` + `git branch -d worktree-<name>` if you left the session some other way) so stale worktrees don't accumulate under `.claude/worktrees/`.
+
+Skip this for trivial, single-file doc/config edits where the risk of conflicting with another agent is negligible — use judgment.
+
+### 2. Red-Green Development (mandatory for every feature)
 
 1. **Write tests first** — unit tests for domain logic, integration tests for API routes, component tests for UI.
 2. **Verify they fail** — run the relevant test suite and confirm new tests are red.
@@ -42,7 +53,7 @@ Each directory contains a `README.md` that lists every file in that directory an
 5. **Refactor** — clean up naming, remove duplication, improve clarity. Re-verify tests.
 6. **Write/update docs** — update the directory README and, if the feature is user-visible, the top-level README.
 
-### 2. Code Review Before Every Commit
+### 3. Code Review Before Every Commit
 
 After a feature is green and refactored:
 
@@ -51,7 +62,7 @@ After a feature is green and refactored:
 3. Run `/verify` to confirm the feature still works end-to-end.
 4. Commit.
 
-### 3. Self-Updating Documentation
+### 4. Self-Updating Documentation
 
 If you discover that a README, skill, or rule is wrong or incomplete, fix it immediately before moving on. Future agents depend on it being accurate.
 
