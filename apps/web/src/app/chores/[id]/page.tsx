@@ -20,5 +20,5 @@ export default async function ChoreDetailPage({ params }: PageProps) {
 
   if (!chore) notFound();
 
-  return <ChoreDetail chore={toChoreJson(chore)} users={users} currentUserId={session.userId} />;
+  return <ChoreDetail chore={toChoreJson(chore)} users={users} />;
 }
