@@ -49,7 +49,7 @@ src/
 ├── lib/
 │   ├── db.ts                   # Drizzle DB client (singleton)
 │   └── session.ts              # iron-session helpers
-└── middleware.ts               # Auth guard (redirects unauthenticated users)
+└── proxy.ts                    # Auth guard (redirects unauthenticated users)
 ```
 
 ## Theming

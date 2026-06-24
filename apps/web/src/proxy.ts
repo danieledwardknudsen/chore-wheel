@@ -7,7 +7,7 @@ const AUTH_ONLY_PATHS = new Set(['/login', '/register']);
 const AUTH_API_PREFIX = '/api/auth';
 const CRON_PATH = '/api/jobs/assign-chores';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith(AUTH_API_PREFIX) || pathname === CRON_PATH) {
