@@ -1,4 +1,4 @@
-﻿import { beforeEach, describe, expect, it, vi } from 'vitest';
+﻿import { describe, expect, it, vi } from 'vitest';
 import { runAssignmentJob } from '../assignmentJobRunner';
 import { InMemoryChoreRepository } from '../testing/inMemoryChoreRepository';
 import { InMemoryChoreRuleRepository } from '../testing/inMemoryChoreRuleRepository';

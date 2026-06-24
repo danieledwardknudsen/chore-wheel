@@ -128,6 +128,9 @@ importers:
 
   infrastructure:
     devDependencies:
+      eslint:
+        specifier: ^9
+        version: 9.39.4(jiti@2.7.0)
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -159,6 +162,9 @@ importers:
       drizzle-kit:
         specifier: ^0.31.10
         version: 0.31.10
+      eslint:
+        specifier: ^9
+        version: 9.39.4(jiti@2.7.0)
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -171,6 +177,9 @@ importers:
 
   packages/domain:
     devDependencies:
+      eslint:
+        specifier: ^9
+        version: 9.39.4(jiti@2.7.0)
       typescript:
         specifier: ^5
         version: 5.9.3

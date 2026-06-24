@@ -9,7 +9,7 @@ import {
   pool,
   rollbackTestTransaction,
 } from './auth/dbTestHelpers.js';
-import { createSessionCookie, makeCookieHeader } from './auth/testHelpers.js';
+import { createSessionCookie } from './auth/testHelpers.js';
 
 let client: PoolClient;
 let db: NeonDatabase<typeof schema>;

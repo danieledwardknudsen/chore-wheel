@@ -54,10 +54,6 @@ export const DELETE = async (): Promise<Response> => {
   const userId = session.userId;
   const ruleRepo = new PostgresChoreRuleRepository(db);
 
-  // Find affected rule IDs before the FK cascade removes the assignee rows.
-  const assignees = await ruleRepo.findAssigneesForRule(userId);
-  const affectedRuleIds = [...new Set(assignees.map((a) => a.choreRuleId))];
-
   // Fetch all rules this user is an assignee of (across all rules).
   const allAffectedRuleIds: string[] = [];
   for (const rule of await ruleRepo.findAll()) {

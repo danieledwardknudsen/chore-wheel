@@ -79,7 +79,7 @@ describe('GET /api/chore-rules', () => {
     const user = await insertUser();
     await setSession(user.id);
 
-    const [rule] = await db.insert(schema.choreRules).values(dailyRuleInput).returning();
+    await db.insert(schema.choreRules).values(dailyRuleInput).returning();
 
     const { GET } = await import('@/app/api/chore-rules/route');
     const res = await GET();
