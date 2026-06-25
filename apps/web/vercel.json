@@ -7,10 +7,6 @@
     {
       "path": "/api/jobs/assign-chores",
       "schedule": "0 12 * * *"
-    },
-    {
-      "path": "/api/jobs/assign-chores",
-      "schedule": "0 13 * * *"
     }
   ]
 }
