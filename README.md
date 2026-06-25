@@ -19,7 +19,7 @@ A shared household chore management app with a retro terminal UI.
      │
      ▼
 ┌────────────────────┐
-│  Vercel Cron Job   │  ──→  runs daily at 8 AM UTC
+│  Vercel Cron Job   │  ──→  runs daily at 5 AM Pacific
 │  /api/jobs/assign  │       expires old chores, creates new,
 │       -chores      │       sends SMS summaries
 └────────────────────┘
