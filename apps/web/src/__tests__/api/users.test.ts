@@ -119,6 +119,55 @@ describe('PATCH /api/users/me', () => {
     const res = await PATCH(req);
     expect(res.status).toBe(422);
   });
+
+  it('sets the profile emoji', async () => {
+    const user = await insertUser();
+    await setSession(user.id);
+
+    const { PATCH } = await import('@/app/api/users/me/route');
+    const req = new Request('http://localhost/api/users/me', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ emoji: '🎉' }),
+    });
+
+    const res = await PATCH(req);
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { emoji: string | null };
+    expect(body.emoji).toBe('🎉');
+  });
+
+  it('clears the profile emoji when set to null', async () => {
+    const user = await insertUser({ emoji: '🎉' });
+    await setSession(user.id);
+
+    const { PATCH } = await import('@/app/api/users/me/route');
+    const req = new Request('http://localhost/api/users/me', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ emoji: null }),
+    });
+
+    const res = await PATCH(req);
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { emoji: string | null };
+    expect(body.emoji).toBeNull();
+  });
+
+  it('returns 422 when emoji exceeds the max length', async () => {
+    const user = await insertUser();
+    await setSession(user.id);
+
+    const { PATCH } = await import('@/app/api/users/me/route');
+    const req = new Request('http://localhost/api/users/me', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ emoji: 'not an emoji, just a long string' }),
+    });
+
+    const res = await PATCH(req);
+    expect(res.status).toBe(422);
+  });
 });
 
 describe('GET /api/users', () => {

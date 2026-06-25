@@ -5,6 +5,7 @@ export const users = pgTable('users', {
   name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   optInEmails: boolean('opt_in_emails').notNull().default(false),
+  emoji: varchar('emoji', { length: 32 }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });

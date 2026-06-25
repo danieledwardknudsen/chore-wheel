@@ -35,6 +35,7 @@ export type UserJson = {
   name: string;
   email: string;
   optInEmails: boolean;
+  emoji: string | null;
 };
 
 export type RuleFormData = {

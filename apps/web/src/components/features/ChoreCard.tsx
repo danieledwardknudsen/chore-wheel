@@ -3,16 +3,18 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/hooks/useTheme';
+import { formatAssigneeLabel } from '@/lib/assignee';
 import { formatDueDate } from '@/lib/formatDueDate';
 import type { ChoreJson } from '@/types/api';
 
 export type ChoreCardProps = {
   chore: ChoreJson;
   assigneeName?: string;
+  assigneeEmoji?: string;
   onAction: () => void;
 };
 
-export const ChoreCard = ({ chore, assigneeName, onAction }: ChoreCardProps) => {
+export const ChoreCard = ({ chore, assigneeName, assigneeEmoji, onAction }: ChoreCardProps) => {
   const [loading, setLoading] = useState(false);
   const {
     primitives: { Box, Button, Badge },
@@ -46,7 +48,7 @@ export const ChoreCard = ({ chore, assigneeName, onAction }: ChoreCardProps) => 
         {chore.status === 'complete' && chore.completedAt
           ? `completed ${chore.completedAt}`
           : `due ${formatDueDate(chore.dueDate)}`}
-        {assigneeName ? ` · @${assigneeName}` : ' · unassigned'}
+        {assigneeName ? ` · ${formatAssigneeLabel(assigneeName, assigneeEmoji)}` : ' · unassigned'}
       </p>
       {isActionable && (
         <div className="flex gap-2 mt-3">

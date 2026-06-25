@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTheme } from '@/hooks/useTheme';
+import { formatAssigneeLabel } from '@/lib/assignee';
 import { formatDueDate } from '@/lib/formatDueDate';
 import type { ChoreJson, UserJson } from '@/types/api';
 
@@ -31,7 +32,7 @@ export const ChoreDetail = ({ chore, users }: ChoreDetailProps) => {
   const [loading, setLoading] = useState(false);
   const [reassignId, setReassignId] = useState<string>(chore.assigneeId ?? '');
 
-  const assigneeName = users.find((u) => u.id === chore.assigneeId)?.name;
+  const assignee = users.find((u) => u.id === chore.assigneeId);
   const isActionable = chore.status === 'incomplete';
 
   const doAction = async (url: string, method = 'PATCH', body?: object) => {
@@ -66,7 +67,7 @@ export const ChoreDetail = ({ chore, users }: ChoreDetailProps) => {
           Due: {formatDueDate(chore.dueDate)}
         </p>
         <p className="text-xs mb-4" style={{ color: 'var(--color-text-muted)' }}>
-          Assignee: {assigneeName ? `@${assigneeName}` : 'unassigned'}
+          Assignee: {assignee ? formatAssigneeLabel(assignee.name, assignee.emoji) : 'unassigned'}
         </p>
 
         {isActionable && (

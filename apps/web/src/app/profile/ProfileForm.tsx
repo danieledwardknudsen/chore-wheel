@@ -15,6 +15,7 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
 
   const [name, setName] = useState(user.name);
   const [optInEmails, setOptInEmails] = useState(user.optInEmails);
+  const [emoji, setEmoji] = useState(user.emoji ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
@@ -27,7 +28,7 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
       const res = await fetch('/api/users/me', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, optInEmails }),
+        body: JSON.stringify({ name, optInEmails, emoji: emoji || null }),
       });
       if (!res.ok) {
         setError('Failed to save profile. Please try again.');
@@ -60,6 +61,14 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            label="Emoji"
+            name="emoji"
+            type="text"
+            placeholder="🙂"
+            value={emoji}
+            onChange={(e) => setEmoji(e.target.value)}
           />
           <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
             Email: {user.email}

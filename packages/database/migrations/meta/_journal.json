@@ -22,6 +22,13 @@
       "when": 1782194295046,
       "tag": "0002_silky_vivisector",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782271277234,
+      "tag": "0003_add_user_emoji",
+      "breakpoints": true
     }
   ]
 }

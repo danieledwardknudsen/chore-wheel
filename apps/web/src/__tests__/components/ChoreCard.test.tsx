@@ -48,6 +48,18 @@ describe('ChoreCard', () => {
     expect(screen.getByText(/@Alice/)).toBeInTheDocument();
   });
 
+  it("shows the assignee's emoji next to their name when set", () => {
+    wrap(
+      <ChoreCard chore={makeChore()} assigneeName="Alice" assigneeEmoji="🎉" onAction={() => {}} />,
+    );
+    expect(screen.getByText(/🎉 @Alice/)).toBeInTheDocument();
+  });
+
+  it("omits the emoji when the assignee hasn't set one", () => {
+    wrap(<ChoreCard chore={makeChore()} assigneeName="Alice" onAction={() => {}} />);
+    expect(screen.queryByText(/🎉/)).not.toBeInTheDocument();
+  });
+
   it('shows "unassigned" when no assignee', () => {
     wrap(<ChoreCard chore={makeChore({ assigneeId: null })} onAction={() => {}} />);
     expect(screen.getByText(/unassigned/)).toBeInTheDocument();

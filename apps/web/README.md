@@ -20,7 +20,7 @@ src/
 │   │   ├── new/page.tsx        # Create rule (server)
 │   │   ├── new/NewRuleForm.tsx # New-rule form with ChoreRuleForm (client)
 │   │   └── [id]/               # Edit/delete rule
-│   ├── profile/                # Profile — name, notification prefs, delete account
+│   ├── profile/                # Profile — name, emoji, notification prefs, delete account
 │   ├── admin/run-job/          # Manually trigger assignment job
 │   └── api/                    # Route handlers
 │       ├── auth/               # Registration, login, phone verification, logout
