@@ -1,22 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getPacificHour, toPacificCalendarDate } from '@/lib/pacificClock';
-
-describe('getPacificHour', () => {
-  it('returns the Pacific hour during PDT (UTC-7)', () => {
-    // 2024-06-17T12:00:00Z — June is PDT, so Pacific time is 05:00.
-    expect(getPacificHour(new Date('2024-06-17T12:00:00Z'))).toBe(5);
-  });
-
-  it('returns the Pacific hour during PST (UTC-8)', () => {
-    // 2024-01-15T13:00:00Z — January is PST, so Pacific time is 05:00.
-    expect(getPacificHour(new Date('2024-01-15T13:00:00Z'))).toBe(5);
-  });
-
-  it('returns a different hour when the instant is outside 5 AM Pacific', () => {
-    expect(getPacificHour(new Date('2024-06-17T12:00:00Z'))).toBe(5);
-    expect(getPacificHour(new Date('2024-06-17T13:00:00Z'))).toBe(6);
-  });
-});
+import { toPacificCalendarDate } from '@/lib/pacificClock';
 
 describe('toPacificCalendarDate', () => {
   it('returns the Pacific calendar date as a UTC-midnight Date', () => {

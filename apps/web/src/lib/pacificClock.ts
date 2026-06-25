@@ -1,14 +1,5 @@
 const PACIFIC_TIME_ZONE = 'America/Los_Angeles';
 
-export const getPacificHour = (instant: Date): number => {
-  const formatted = new Intl.DateTimeFormat('en-US', {
-    timeZone: PACIFIC_TIME_ZONE,
-    hour: 'numeric',
-    hourCycle: 'h23',
-  }).format(instant);
-  return Number(formatted);
-};
-
 export const toPacificCalendarDate = (instant: Date): Date => {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: PACIFIC_TIME_ZONE,
