@@ -25,6 +25,12 @@ export const Assigned: Story = {
   render: () => <ChoreCard chore={baseChore} assigneeName="Alice" onAction={() => {}} />,
 };
 
+export const AssignedWithEmoji: Story = {
+  render: () => (
+    <ChoreCard chore={baseChore} assigneeName="Alice" assigneeEmoji="🎉" onAction={() => {}} />
+  ),
+};
+
 export const Unassigned: Story = {
   render: () => <ChoreCard chore={{ ...baseChore, assigneeId: null }} onAction={() => {}} />,
 };

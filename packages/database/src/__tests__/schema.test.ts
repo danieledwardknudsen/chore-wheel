@@ -53,6 +53,7 @@ describe('users table', () => {
     expect(inserted!.name).toBe('Alice');
     expect(inserted!.email).toBe('alice@example.com');
     expect(inserted!.optInEmails).toBe(false);
+    expect(inserted!.emoji).toBeNull();
     expect(inserted!.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 
     const found = await db.select().from(schema.users).where(eq(schema.users.id, inserted!.id));

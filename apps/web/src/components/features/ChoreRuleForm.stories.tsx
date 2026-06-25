@@ -8,12 +8,14 @@ const users: UserJson[] = [
     name: 'Alice',
     email: 'alice@example.com',
     optInEmails: true,
+    emoji: null,
   },
   {
     id: 'user-2',
     name: 'Bob',
     email: 'bob@example.com',
     optInEmails: false,
+    emoji: null,
   },
 ];
 

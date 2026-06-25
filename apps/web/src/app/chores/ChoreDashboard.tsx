@@ -12,11 +12,13 @@ type ChoreDashboardProps = {
   currentUserId: string;
 };
 
+type AssigneeInfo = { name: string; emoji: string | null };
+
 type ChoreSectionProps = {
   title: string;
   emptyMessage: string;
   chores: ChoreJson[];
-  userMap: Record<string, string>;
+  userMap: Record<string, AssigneeInfo>;
   onAction: () => void;
 };
 
@@ -34,12 +36,13 @@ const ChoreSection = ({ title, emptyMessage, chores, userMap, onAction }: ChoreS
       ) : (
         <div className="flex flex-col gap-3">
           {chores.map((c) => {
-            const name = c.assigneeId != null ? userMap[c.assigneeId] : undefined;
+            const assignee = c.assigneeId != null ? userMap[c.assigneeId] : undefined;
             return (
               <ChoreCard
                 key={c.id}
                 chore={c}
-                {...(name !== undefined ? { assigneeName: name } : {})}
+                {...(assignee !== undefined ? { assigneeName: assignee.name } : {})}
+                {...(assignee?.emoji != null ? { assigneeEmoji: assignee.emoji } : {})}
                 onAction={onAction}
               />
             );
@@ -58,7 +61,7 @@ export const ChoreDashboard = ({
 }: ChoreDashboardProps) => {
   const router = useRouter();
 
-  const userMap = Object.fromEntries(users.map((u) => [u.id, u.name]));
+  const userMap = Object.fromEntries(users.map((u) => [u.id, { name: u.name, emoji: u.emoji }]));
 
   const mine = chores.filter((c) => c.assigneeId === currentUserId);
   const unassigned = chores.filter((c) => c.assigneeId === null);

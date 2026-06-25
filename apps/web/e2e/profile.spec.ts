@@ -29,6 +29,47 @@ test.describe('profile', () => {
     expect(after).not.toBe(before);
   });
 
+  test('sets a profile emoji and persists it', async ({ authedPage: page }) => {
+    await page.goto('/profile');
+    await page.getByLabel('Emoji').fill('🎉');
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    await expect(page.getByText('Saved.')).toBeVisible({ timeout: 5_000 });
+
+    await page.reload();
+    await expect(page.getByLabel('Emoji')).toHaveValue('🎉');
+  });
+
+  test('shows the profile emoji next to the assignee name on the chores page', async ({
+    authedPage: page,
+  }) => {
+    await page.goto('/profile');
+    await page.getByLabel('Emoji').fill('🎉');
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(page.getByText('Saved.')).toBeVisible({ timeout: 5_000 });
+
+    const me = (await (await page.request.get('/api/users/me')).json()) as { id: string };
+    const today = new Date().toISOString().slice(0, 10);
+    const ruleRes = await page.request.post('/api/chore-rules', {
+      data: {
+        title: 'Water the plants',
+        assigneeRuleType: 'static',
+        staticAssigneeId: me.id,
+        scheduleType: 'one_off',
+        scheduleConfig: { type: 'one_off', date: today },
+        assignees: [{ userId: me.id, weight: 1, position: 0 }],
+      },
+    });
+    expect(ruleRes.ok()).toBeTruthy();
+
+    await page.goto('/chores');
+    await expect(page.getByText(/🎉 @E2E User/)).toBeVisible();
+
+    await page.getByText('Water the plants').click();
+    await expect(page).toHaveURL(/\/chores\/[0-9a-f-]+/);
+    await expect(page.getByText(/🎉 @E2E User/)).toBeVisible();
+  });
+
   test('deletes account and redirects to /login', async ({ authedPage: page }) => {
     await page.goto('/profile');
 

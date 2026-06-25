@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTheme } from '@/hooks/useTheme';
+import { formatAssigneeLabel } from '@/lib/assignee';
 import type { ChoreJson, UserJson } from '@/types/api';
 
 const SELECT_STYLE: React.CSSProperties = {
@@ -31,7 +32,7 @@ export const ChoreDetail = ({ chore, users, currentUserId }: ChoreDetailProps) =
   const [loading, setLoading] = useState(false);
   const [reassignId, setReassignId] = useState<string>(chore.assigneeId ?? '');
 
-  const assigneeName = users.find((u) => u.id === chore.assigneeId)?.name;
+  const assignee = users.find((u) => u.id === chore.assigneeId);
   const isActionable = chore.status === 'incomplete';
   const isMine = chore.assigneeId === currentUserId;
 
@@ -67,7 +68,7 @@ export const ChoreDetail = ({ chore, users, currentUserId }: ChoreDetailProps) =
           Due: {chore.dueDate}
         </p>
         <p className="text-xs mb-4" style={{ color: 'var(--color-text-muted)' }}>
-          Assignee: {assigneeName ? `@${assigneeName}` : 'unassigned'}
+          Assignee: {assignee ? formatAssigneeLabel(assignee.name, assignee.emoji) : 'unassigned'}
         </p>
 
         {isActionable && (

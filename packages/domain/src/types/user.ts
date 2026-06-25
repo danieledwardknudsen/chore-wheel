@@ -3,4 +3,5 @@ export type User = {
   name: string;
   email: string;
   optInEmails: boolean;
+  emoji: string | null;
 };

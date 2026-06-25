@@ -25,6 +25,7 @@ const user = (id: string, optInEmails = true): User => ({
   name: `User ${id}`,
   email: `${id}@example.com`,
   optInEmails,
+  emoji: null,
 });
 
 const incompleteChore = (id: string, dueDate: Date, assigneeId: string | null = null): Chore => ({

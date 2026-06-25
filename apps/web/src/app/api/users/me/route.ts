@@ -7,6 +7,13 @@ import { getSession } from '@/lib/session';
 const patchSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   optInEmails: z.boolean().optional(),
+  emoji: z
+    .string()
+    .trim()
+    .max(16)
+    .nullable()
+    .transform((value) => (value === '' ? null : value))
+    .optional(),
 });
 
 export const GET = async (): Promise<Response> => {
@@ -38,7 +45,12 @@ export const PATCH = async (request: Request): Promise<Response> => {
   }
 
   const repo = new PostgresUserRepository(db);
-  const updated = await repo.updateProfile(session.userId, parsed.data);
+  const updateInput = {
+    ...(parsed.data.name !== undefined ? { name: parsed.data.name } : {}),
+    ...(parsed.data.optInEmails !== undefined ? { optInEmails: parsed.data.optInEmails } : {}),
+    ...(parsed.data.emoji !== undefined ? { emoji: parsed.data.emoji } : {}),
+  };
+  const updated = await repo.updateProfile(session.userId, updateInput);
   if (!updated) {
     return Response.json({ error: 'User not found' }, { status: 404 });
   }

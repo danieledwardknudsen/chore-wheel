@@ -1,4 +1,4 @@
-import type { UserRepository } from '@chore-wheel/domain';
+import type { UpdateProfileInput, UserRepository } from '@chore-wheel/domain';
 import type { User } from '@chore-wheel/domain';
 import { asc, eq } from 'drizzle-orm';
 import type { DatabaseClient } from '../client';
@@ -9,6 +9,7 @@ const mapUser = (row: typeof users.$inferSelect): User => ({
   name: row.name,
   email: row.email,
   optInEmails: row.optInEmails,
+  emoji: row.emoji,
 });
 
 export class PostgresUserRepository implements UserRepository {
@@ -29,13 +30,7 @@ export class PostgresUserRepository implements UserRepository {
     return rows.map(mapUser);
   }
 
-  async updateProfile(
-    id: string,
-    input: {
-      name?: string | undefined;
-      optInEmails?: boolean | undefined;
-    },
-  ): Promise<User | null> {
+  async updateProfile(id: string, input: UpdateProfileInput): Promise<User | null> {
     const rows = await this.db
       .update(users)
       .set({ ...input, updatedAt: new Date() })
