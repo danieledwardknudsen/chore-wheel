@@ -6,6 +6,7 @@ import {
 import { ConsoleNotificationSink, runAssignmentJob } from '@chore-wheel/domain';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
+import { toPacificCalendarDate } from '@/lib/pacificClock';
 import { getSession } from '@/lib/session';
 
 export const POST = async (request: Request): Promise<Response> => {
@@ -27,7 +28,7 @@ export const POST = async (request: Request): Promise<Response> => {
     repos,
     new ConsoleNotificationSink(),
     { sendNotifications: !disableMessages, websiteUrl: process.env['WEBAUTHN_ORIGIN'] ?? '' },
-    new Date(),
+    toPacificCalendarDate(new Date()),
   );
 
   return Response.json(result);

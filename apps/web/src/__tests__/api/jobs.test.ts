@@ -144,6 +144,34 @@ describe('POST /api/jobs/run', () => {
     // The chore was due 2024-06-08 and today is well past that + 7 days, so it should expire.
     expect(body.expiredCount).toBeGreaterThanOrEqual(1);
   });
+
+  it('dates the created chore to the Pacific calendar day, not the raw UTC day', async () => {
+    const user = await insertUser();
+    await setSession(user.id);
+
+    await db.insert(schema.choreRules).values({
+      title: 'Daily Dishes',
+      assigneeRuleType: 'free_for_all',
+      scheduleType: 'recurring',
+      scheduleConfig: { type: 'recurring', frequency: 'daily' },
+    });
+
+    vi.useFakeTimers({ toFake: ['Date'] });
+    // Still 2024-06-16 in Pacific time even though UTC has already rolled to the 17th.
+    vi.setSystemTime(new Date('2024-06-17T02:00:00Z'));
+
+    const { POST } = await import('@/app/api/jobs/run/route');
+    const req = new Request('http://localhost/api/jobs/run?disableMessages=true', {
+      method: 'POST',
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+
+    const chores = await db.select().from(schema.chores);
+    expect(chores[0]?.dueDate).toBe('2024-06-16');
+
+    vi.useRealTimers();
+  });
 });
 
 describe('GET /api/jobs/assign-chores', () => {
@@ -172,5 +200,73 @@ describe('GET /api/jobs/assign-chores', () => {
     });
     const res = await GET(req);
     expect(res.status).toBe(200);
+  });
+
+  describe('5 AM Pacific gating', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('skips the job when invoked outside the 5 AM Pacific hour', async () => {
+      process.env['CRON_SECRET'] = 'correct-secret';
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date('2024-06-17T13:00:00Z')); // 6 AM PDT
+
+      const { GET } = await import('@/app/api/jobs/assign-chores/route');
+      const req = new Request('http://localhost/api/jobs/assign-chores', {
+        headers: { Authorization: 'Bearer correct-secret' },
+      });
+      const res = await GET(req);
+
+      expect(res.status).toBe(200);
+      const body = (await res.json()) as { skipped?: boolean };
+      expect(body.skipped).toBe(true);
+    });
+
+    it('runs the job at 5 AM Pacific during PDT (UTC-7)', async () => {
+      process.env['CRON_SECRET'] = 'correct-secret';
+      await db.insert(schema.choreRules).values({
+        title: 'Daily Dishes',
+        assigneeRuleType: 'free_for_all',
+        scheduleType: 'recurring',
+        scheduleConfig: { type: 'recurring', frequency: 'daily' },
+      });
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date('2024-06-17T12:00:00Z')); // 5 AM PDT
+
+      const { GET } = await import('@/app/api/jobs/assign-chores/route');
+      const req = new Request('http://localhost/api/jobs/assign-chores', {
+        headers: { Authorization: 'Bearer correct-secret' },
+      });
+      const res = await GET(req);
+
+      expect(res.status).toBe(200);
+      const body = (await res.json()) as { skipped?: boolean; createdCount: number };
+      expect(body.skipped).toBeUndefined();
+      expect(body.createdCount).toBe(1);
+    });
+
+    it('runs the job at 5 AM Pacific during PST (UTC-8)', async () => {
+      process.env['CRON_SECRET'] = 'correct-secret';
+      await db.insert(schema.choreRules).values({
+        title: 'Daily Dishes',
+        assigneeRuleType: 'free_for_all',
+        scheduleType: 'recurring',
+        scheduleConfig: { type: 'recurring', frequency: 'daily' },
+      });
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date('2024-01-15T13:00:00Z')); // 5 AM PST
+
+      const { GET } = await import('@/app/api/jobs/assign-chores/route');
+      const req = new Request('http://localhost/api/jobs/assign-chores', {
+        headers: { Authorization: 'Bearer correct-secret' },
+      });
+      const res = await GET(req);
+
+      expect(res.status).toBe(200);
+      const body = (await res.json()) as { skipped?: boolean; createdCount: number };
+      expect(body.skipped).toBeUndefined();
+      expect(body.createdCount).toBe(1);
+    });
   });
 });
