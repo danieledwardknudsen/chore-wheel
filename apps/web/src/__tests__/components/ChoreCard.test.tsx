@@ -3,6 +3,7 @@ import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import type { ReactElement } from 'react';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { ChoreCard } from '@/components/features/ChoreCard';
+import { formatDueDate } from '@/lib/formatDueDate';
 import type { ChoreJson } from '@/types/api';
 
 const mockFetch = vi.fn();
@@ -37,9 +38,9 @@ describe('ChoreCard', () => {
     expect(screen.getByText('[PENDING]')).toBeInTheDocument();
   });
 
-  it('shows due date', () => {
+  it('shows due date formatted as "[Day of the week] the [day of the month]"', () => {
     wrap(<ChoreCard chore={makeChore()} onAction={() => {}} />);
-    expect(screen.getByText(/2025-01-15/)).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(formatDueDate('2025-01-15')))).toBeInTheDocument();
   });
 
   it('shows assignee name when provided', () => {
@@ -92,7 +93,9 @@ describe('ChoreCard', () => {
       />,
     );
     expect(screen.getByText(/completed 2025-01-20/)).toBeInTheDocument();
-    expect(screen.queryByText(/due 2025-01-15/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(new RegExp(`due ${formatDueDate('2025-01-15')}`)),
+    ).not.toBeInTheDocument();
   });
 
   it('calls fetch with correct URL when Complete is clicked', async () => {

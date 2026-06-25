@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/hooks/useTheme';
+import { formatDueDate } from '@/lib/formatDueDate';
 import type { ChoreJson } from '@/types/api';
 
 export type ChoreCardProps = {
@@ -44,7 +45,7 @@ export const ChoreCard = ({ chore, assigneeName, onAction }: ChoreCardProps) => 
       <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
         {chore.status === 'complete' && chore.completedAt
           ? `completed ${chore.completedAt}`
-          : `due ${chore.dueDate}`}
+          : `due ${formatDueDate(chore.dueDate)}`}
         {assigneeName ? ` · @${assigneeName}` : ' · unassigned'}
       </p>
       {isActionable && (
