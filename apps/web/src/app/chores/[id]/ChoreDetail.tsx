@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTheme } from '@/hooks/useTheme';
+import { formatDueDate } from '@/lib/formatDueDate';
 import type { ChoreJson, UserJson } from '@/types/api';
 
 const SELECT_STYLE: React.CSSProperties = {
@@ -64,7 +65,7 @@ export const ChoreDetail = ({ chore, users, currentUserId }: ChoreDetailProps) =
           <Badge status={chore.status} />
         </div>
         <p className="text-xs mb-1" style={{ color: 'var(--color-text-muted)' }}>
-          Due: {chore.dueDate}
+          Due: {formatDueDate(chore.dueDate)}
         </p>
         <p className="text-xs mb-4" style={{ color: 'var(--color-text-muted)' }}>
           Assignee: {assigneeName ? `@${assigneeName}` : 'unassigned'}
